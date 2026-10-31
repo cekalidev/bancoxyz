@@ -1,0 +1,46 @@
+{
+  "expo": {
+    "name": "BancoXYZ",
+    "slug": "bancoxyz",
+    "version": "1.0.0",
+    "scheme": "bancoxyz",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.bancoxyz.app"
+    },
+    "android": {
+      "package": "com.bancoxyz.app",
+      "userInterfaceStyle": "light",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png",
+        "backgroundColor": "#092B6A"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "plugins": [
+      "expo-router",
+      "expo-system-ui",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#092B6A",
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 240,
+          "resizeMode": "contain"
+        }
+      ],
+      [
+        "expo-status-bar",
+        {
+          "style": "dark"
+        }
+      ],
+      "expo-asset",
+      "expo-secure-store"
+    ]
+  }
+}
