@@ -5,9 +5,15 @@ import { processColor } from 'react-native';
 import { AlertIcon } from '@/components/icons/AlertIcon';
 import { BackIcon } from '@/components/icons/BackIcon';
 import { CalendarIcon } from '@/components/icons/CalendarIcon';
+import { CheckIcon } from '@/components/icons/CheckIcon';
+import { ChevronDownIcon } from '@/components/icons/ChevronDownIcon';
+import { ClockIcon } from '@/components/icons/ClockIcon';
+import { CloseIcon } from '@/components/icons/CloseIcon';
 import { EyeIcon } from '@/components/icons/EyeIcon';
 import { EyeOffIcon } from '@/components/icons/EyeOffIcon';
 import { InfoIcon } from '@/components/icons/InfoIcon';
+import { ListIcon } from '@/components/icons/ListIcon';
+import { SearchIcon } from '@/components/icons/SearchIcon';
 import { SuccessIcon } from '@/components/icons/SuccessIcon';
 import { colors, layout } from '@/theme';
 
@@ -25,6 +31,12 @@ const icons: [string, IconComponent][] = [
   ['BackIcon', BackIcon],
   ['CalendarIcon', CalendarIcon],
   ['SuccessIcon', SuccessIcon],
+  ['SearchIcon', SearchIcon],
+  ['CloseIcon', CloseIcon],
+  ['ListIcon', ListIcon],
+  ['ClockIcon', ClockIcon],
+  ['CheckIcon', CheckIcon],
+  ['ChevronDownIcon', ChevronDownIcon],
 ];
 
 async function observeIcons(size?: number) {

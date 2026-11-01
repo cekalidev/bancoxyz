@@ -4,13 +4,14 @@ import type { ReactElement } from 'react';
 import { Platform } from 'react-native';
 
 import { IosDatePickerModal } from '@/components/IosDatePickerModal';
+import { IosDatePickerPanel } from '@/components/IosDatePickerPanel';
 import { calendarDateFromLocal, toLocalDate } from '@/utils/date';
 import type { CalendarDate } from '@/utils/date';
 
 export type DatePickerRequest = {
   value: CalendarDate;
-  min: CalendarDate;
-  max: CalendarDate;
+  min?: CalendarDate;
+  max?: CalendarDate;
   onPick: (date: CalendarDate) => void;
   onClose: () => void;
 };
@@ -24,15 +25,17 @@ function openAndroidPicker({ value, min, max, onPick, onClose }: DatePickerReque
   DateTimePickerAndroid.open({
     mode: 'date',
     value: toLocalDate(value),
-    minimumDate: toLocalDate(min),
-    maximumDate: toLocalDate(max),
+    ...(min && { minimumDate: toLocalDate(min) }),
+    ...(max && { maximumDate: toLocalDate(max) }),
     onValueChange: (_event, date) => onPick(calendarDateFromLocal(date)),
     onDismiss: onClose,
   });
 }
 
-function iosModalFor(request: DatePickerRequest, close: () => void): ReactElement {
-  return createElement(IosDatePickerModal, {
+export type DatePickerOptions = { inline?: boolean };
+
+function iosPickerFor(request: DatePickerRequest, close: () => void, inline: boolean): ReactElement {
+  return createElement(inline ? IosDatePickerPanel : IosDatePickerModal, {
     value: request.value,
     min: request.min,
     max: request.max,
@@ -47,7 +50,7 @@ function iosModalFor(request: DatePickerRequest, close: () => void): ReactElemen
   });
 }
 
-export function useDatePicker(): DatePicker {
+export function useDatePicker(options?: DatePickerOptions): DatePicker {
   const [request, setRequest] = useState<DatePickerRequest | null>(null);
   const open = useCallback((next: DatePickerRequest) => {
     if (Platform.OS === 'android') openAndroidPicker(next);
@@ -55,5 +58,7 @@ export function useDatePicker(): DatePicker {
   }, []);
   const close = useCallback(() => setRequest(null), []);
 
-  return { open, element: request ? iosModalFor(request, close) : null };
+  const inline = options?.inline ?? false;
+
+  return { open, element: request ? iosPickerFor(request, close, inline) : null };
 }

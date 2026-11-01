@@ -34,6 +34,12 @@ function toCents(amount: number): number {
   return Math.round(Number((Math.abs(amount) * 100).toPrecision(12)));
 }
 
+export function amountToCents(amount: number): number {
+  const cents = toCents(amount);
+
+  return amount < 0 && cents !== 0 ? -cents : cents;
+}
+
 function groupThousands(units: number): string {
   return String(units).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }

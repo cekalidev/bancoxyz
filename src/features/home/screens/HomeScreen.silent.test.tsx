@@ -2,9 +2,8 @@ import { router } from 'expo-router';
 import { act, screen } from 'expo-router/testing-library';
 
 import { ERROR_MESSAGES } from '@/services/api/errors';
-import { balanceBody } from '@/test/apiFixtures';
+import { balanceBody, transferListWrapped } from '@/test/apiFixtures';
 import { captureAppState, type AppStateCapture } from '@/test/appStateMock';
-import { defer } from '@/test/defer';
 import { mockApiRoutes, reply } from '@/test/fetchMock';
 import {
   balanceRequests,
@@ -47,8 +46,7 @@ describe('HomeScreen: refresco al volver del segundo plano', () => {
     await loadHome();
     announce.mockClear();
     // La respuesta del refresco queda en espera hasta que el test la suelte.
-    const refresh = defer<Response>();
-    jest.mocked(global.fetch).mockImplementation(() => refresh.promise);
+    const refresh = holdNextResponse();
 
     await appState.emit('background');
     await appState.emit('active');
@@ -71,7 +69,7 @@ describe('HomeScreen: vuelta del segundo plano fuera del Inicio', () => {
     await loadHome();
     await act(async () => router.push('/transferencias'));
     expect(screen).toHavePathname('/transferencias');
-    mockApiRoutes({ balance: reply(200, balanceBody(2500, 'USD')) });
+    mockApiRoutes({ balance: reply(200, balanceBody(2500, 'USD')), transferList: reply(200, transferListWrapped) });
 
     await appState.emit('background');
     await appState.emit('active');
@@ -163,7 +161,7 @@ describe('HomeScreen: nuevo fallo del refresco en silencio sin cifra', () => {
       const announce = spyOnAnnouncements(os);
       await failFirstLoad();
       announce.mockClear();
-      mockApiRoutes({ balance: 'networkError' });
+      mockApiRoutes({ balance: 'networkError', transferList: reply(200, transferListWrapped) });
 
       await trigger();
       await settleRequests();

@@ -4,7 +4,7 @@ import { act, screen } from 'expo-router/testing-library';
 import { Alert, type AlertButton } from 'react-native';
 
 import { ERROR_MESSAGES } from '@/services/api/errors';
-import { balanceOk, loginOk, sessionUnauthorized } from '@/test/apiFixtures';
+import { balanceOk, loginOk, sessionUnauthorized, transferListWrapped } from '@/test/apiFixtures';
 import { mockApiRoutes, reply } from '@/test/fetchMock';
 import { balanceRequests, settleRequests, spyOnAnnouncements } from '@/test/homeHelpers';
 import { secureStoreModule, storedValue } from '@/test/secureStoreMock';
@@ -93,7 +93,7 @@ async function expireOnRefresh() {
   expectVisibleBalance();
   await act(async () => router.push('/transferencias'));
   expect(screen).toHavePathname('/transferencias');
-  mockApiRoutes({ login: reply(200, loginOk), balance: EXPIRED_REPLY });
+  mockApiRoutes({ login: reply(200, loginOk), balance: EXPIRED_REPLY, transferList: reply(200, transferListWrapped) });
   await act(async () => router.back());
 }
 
@@ -132,7 +132,7 @@ const entryPaths: [string, () => Promise<number>][] = [
 
 beforeEach(() => {
   prepareAppTest();
-  mockApiRoutes({ login: reply(200, loginOk), balance: reply(200, balanceOk) });
+  mockApiRoutes({ login: reply(200, loginOk), balance: reply(200, balanceOk), transferList: reply(200, transferListWrapped) });
 });
 afterEach(jest.restoreAllMocks);
 

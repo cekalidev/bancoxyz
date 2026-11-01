@@ -1,1 +1,1 @@
-export { TransfersScreen as default } from '@/features/transfers';
+export { TransferListScreen as default } from '@/features/transfer-list';

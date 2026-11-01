@@ -13,7 +13,7 @@ jest.mock('@/components/useDatePicker', () =>
   jest.requireActual<typeof import('@/test/datePickerMock')>('@/test/datePickerMock').datePickerMockFactory(),
 );
 
-const COMING_SOON = 'Disponible pronto';
+const COUNTER = '3 transferencias';
 const GREETING = 'Hola, Ana Prueba';
 const FORM_AVAILABLE = 'Disponible: US$\u00a01.800,00';
 const FIRST_AMOUNT = 'US$ 1.800,00';
@@ -66,13 +66,13 @@ describe('accesos del Inicio', () => {
     expect(screen.getByRole('header', { name: 'Nueva transferencia' })).toBeOnTheScreen();
   });
 
-  it('Ver transferencias abre el listado provisional', async () => {
+  it('Ver transferencias abre el listado', async () => {
     await openHome();
 
     await fireEvent.press(screen.getByRole('button', { name: 'Ver transferencias' }));
 
     expect(screen).toHavePathname('/transferencias');
-    expect(await screen.findByRole('header', { name: COMING_SOON })).toBeOnTheScreen();
+    expect(await screen.findByText(COUNTER)).toBeOnTheScreen();
     expect(screen.getByRole('header', { name: 'Transferencias' })).toBeOnTheScreen();
   });
 });

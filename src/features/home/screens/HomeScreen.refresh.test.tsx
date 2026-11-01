@@ -3,9 +3,8 @@ import { act, fireEvent, screen } from 'expo-router/testing-library';
 import { AccessibilityInfo } from 'react-native';
 
 import { ERROR_MESSAGES } from '@/services/api/errors';
-import { balanceBody } from '@/test/apiFixtures';
+import { balanceBody, transferListWrapped } from '@/test/apiFixtures';
 import { captureAppState, type AppStateCapture } from '@/test/appStateMock';
-import { defer } from '@/test/defer';
 import { mockApiRoutes, reply } from '@/test/fetchMock';
 import {
   balanceRequests,
@@ -43,8 +42,7 @@ describe('HomeScreen: refresco al volver', () => {
   it('al volver al Inicio pide el saldo sin skeleton, conserva la cifra y la actualiza con la del servidor', async () => {
     await loadAndLeave();
     // La respuesta del refresco queda en espera hasta que el test la suelte.
-    const refresh = defer<Response>();
-    jest.mocked(global.fetch).mockImplementation(() => refresh.promise);
+    const refresh = holdNextResponse();
 
     await goBackHome();
 
@@ -71,7 +69,7 @@ describe('HomeScreen: accesibilidad del refresco al volver', () => {
     await loadAndLeave();
     announce.mockClear();
     sendEvent.mockClear();
-    mockApiRoutes({ balance: reply(200, balanceBody(2500, 'USD')) });
+    mockApiRoutes({ balance: reply(200, balanceBody(2500, 'USD')), transferList: reply(200, transferListWrapped) });
 
     await goBackHome();
     await settleRequests();
@@ -86,7 +84,7 @@ describe('HomeScreen: accesibilidad del refresco al volver', () => {
 // Deja la cifra con el aviso encima tras un refresco al volver que falla sin red.
 async function loadWithNotice() {
   await loadAndLeave();
-  mockApiRoutes({ balance: 'networkError' });
+  mockApiRoutes({ balance: 'networkError', transferList: reply(200, transferListWrapped) });
   await goBackHome();
   await settleRequests();
   expect(screen.getByText(NETWORK)).toBeOnTheScreen();
@@ -170,7 +168,7 @@ describe('HomeScreen: refresco correcto con el aviso encima', () => {
 
 // Lanza el disparador con la siguiente respuesta correcta y espera a que se pinte la nueva cifra.
 async function refreshOk(trigger: Trigger) {
-  mockApiRoutes({ balance: reply(200, balanceBody(2500, 'USD')) });
+  mockApiRoutes({ balance: reply(200, balanceBody(2500, 'USD')), transferList: reply(200, transferListWrapped) });
   await trigger(appState);
   await settleRequests();
   expect(screen.getByText(NEW_AMOUNT)).toBeOnTheScreen();
@@ -224,7 +222,7 @@ describe('HomeScreen: nuevo fallo tras Reintentar', () => {
       const announce = spyOnAnnouncements(os);
       await loadWithNotice();
       announce.mockClear();
-      mockApiRoutes({ balance: 'networkError' });
+      mockApiRoutes({ balance: 'networkError', transferList: reply(200, transferListWrapped) });
 
       await fireEvent.press(screen.getByRole('button', { name: 'Reintentar' }));
       await settleRequests();

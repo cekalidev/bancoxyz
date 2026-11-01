@@ -5,7 +5,7 @@ import { inspect } from 'util';
 
 import { ERROR_MESSAGES } from '@/services/api/errors';
 import { accessibleOrder, exposedStrings } from '@/test/a11yTree';
-import { balanceBody, sessionUnauthorized } from '@/test/apiFixtures';
+import { balanceBody, sessionUnauthorized, transferListWrapped } from '@/test/apiFixtures';
 import { defer } from '@/test/defer';
 import { mockApiRoutes, reply, type Reply } from '@/test/fetchMock';
 import { balanceResponse, homeSession, renderHome, settleRequests } from '@/test/homeHelpers';
@@ -25,7 +25,7 @@ async function loadAmount() {
 // Con la cifra ya cargada, vuelve al Inicio con un refresco fallido: aviso encima de la tarjeta.
 async function failRefreshOnReturn(balance: Reply) {
   await act(async () => router.push('/transferencias'));
-  mockApiRoutes({ balance });
+  mockApiRoutes({ balance, transferList: reply(200, transferListWrapped) });
   await act(async () => router.back());
   await settleRequests();
 }
@@ -162,7 +162,7 @@ describe('HomeScreen: el token y el importe no se filtran', () => {
     expectNoLeaks(spies);
 
     await act(async () => router.push('/transferencias'));
-    mockApiRoutes({ balance: reply(200, balanceBody(2500, 'USD')) });
+    mockApiRoutes({ balance: reply(200, balanceBody(2500, 'USD')), transferList: reply(200, transferListWrapped) });
     await act(async () => router.back());
     await settleRequests();
     expect(screen.getByText('US$\u00a02.500,00')).toBeOnTheScreen();

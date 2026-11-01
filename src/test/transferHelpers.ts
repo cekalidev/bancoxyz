@@ -6,12 +6,12 @@ import { connectApiToSession } from '@/features/auth';
 import { useSessionStore } from '@/features/auth/sessionStore';
 import { HomeScreen } from '@/features/home';
 import { AppStack } from '@/features/shell/AppStack';
+import { TransferListScreen } from '@/features/transfer-list';
 import {
   ConfirmTransferScreen,
   connectTransfersToSession,
   NewTransferScreen,
   TransferResultScreen,
-  TransfersScreen,
 } from '@/features/transfers';
 import { finishAttempt, resetTransfers, setDraft } from '@/features/transfers/transferActions';
 import type { TransferAttempt, TransferDraft } from '@/features/transfers/types';
@@ -60,7 +60,7 @@ export async function renderTransferFlow({ balance = reply(200, balanceOk), tran
       'nueva-transferencia/index': NewTransferScreen,
       'nueva-transferencia/confirmar': ConfirmTransferScreen,
       'nueva-transferencia/resultado': TransferResultScreen,
-      transferencias: TransfersScreen,
+      transferencias: TransferListScreen,
     },
     { initialUrl: link ?? '/' },
   );

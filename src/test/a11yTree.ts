@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react-native';
 
 // Nodo host del árbol renderizado: los hijos son otros nodos o textos sueltos.
-type TreeNode = { props: Record<string, unknown>; children: readonly (TreeNode | string)[] };
+type TreeNode = { type?: unknown; props: Record<string, unknown>; children: readonly (TreeNode | string)[] };
 
 const VALUE_KEYS = ['text', 'now', 'min', 'max'] as const;
 
@@ -27,13 +27,13 @@ function accessibleName(node: TreeNode) {
   return ownLabel(node) ?? textContent(node);
 }
 
-// Nombres accesibles en el orden del árbol (en profundidad). Un nodo accesible se lee como uno solo,
-// así que no se baja en él; los subárboles ocultos al lector se saltan enteros.
-export function accessibleOrder(root: TreeNode = screen.container): string[] {
+// Nombres de los nodos que lee el lector, en el orden del árbol (en profundidad). Un nodo que se lee
+// se lee como uno solo, así que no se baja en él; los subárboles ocultos al lector se saltan enteros.
+function namesInOrder(root: TreeNode, isRead: (node: TreeNode) => boolean): string[] {
   const names: string[] = [];
   const visit = (node: TreeNode) => {
     if (isHiddenFromReader(node)) return;
-    if (isAccessibleNode(node)) {
+    if (isRead(node)) {
       names.push(accessibleName(node));
       return;
     }
@@ -41,6 +41,23 @@ export function accessibleOrder(root: TreeNode = screen.container): string[] {
   };
   visit(root);
   return names;
+}
+
+// Nombres de los elementos accesibles (con `accessible` o un rol) en el orden del árbol.
+export function accessibleOrder(root: TreeNode = screen.container): string[] {
+  return namesInOrder(root, isAccessibleNode);
+}
+
+// Además de los elementos accesibles, el lector recorre los campos de texto y los textos sueltos.
+function isReadNode(node: TreeNode) {
+  if (node.type === 'TextInput') return true;
+  return node.type === 'Text' && node.props.accessible !== false;
+}
+
+// Lo que recorre el lector en orden: como `accessibleOrder`, más los campos de texto (por su etiqueta)
+// y los textos que no están dentro de un elemento accesible.
+export function readingOrder(root: TreeNode = screen.container): string[] {
+  return namesInOrder(root, (node) => isAccessibleNode(node) || isReadNode(node));
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

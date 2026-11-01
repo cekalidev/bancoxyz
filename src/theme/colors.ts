@@ -48,4 +48,5 @@ export const colors = {
   skeletonOnBrand: 'rgba(255, 255, 255, 0.2)',
   scrim: 'rgba(9, 43, 106, 0.48)',
   ripple: 'rgba(33, 0, 111, 0.12)',
+  chipText: palette.chipText,
 } as const;

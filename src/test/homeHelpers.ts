@@ -6,11 +6,12 @@ import { AccessibilityInfo, Platform } from 'react-native';
 import { connectApiToSession } from '@/features/auth';
 import { useSessionStore } from '@/features/auth/sessionStore';
 import { HomeScreen } from '@/features/home';
-import { ConfirmTransferScreen, NewTransferScreen, TransferResultScreen, TransfersScreen } from '@/features/transfers';
+import { TransferListScreen } from '@/features/transfer-list';
+import { ConfirmTransferScreen, NewTransferScreen, TransferResultScreen } from '@/features/transfers';
 import { API_URLS } from '@/services/api/endpoints';
 import type { Session } from '@/services/api/types';
 
-import { balanceBody, balanceOk, loginOk } from './apiFixtures';
+import { balanceBody, balanceOk, loginOk, transferListWrapped } from './apiFixtures';
 import { defer } from './defer';
 import { mockApiRoutes, reply, type Reply } from './fetchMock';
 import { resetSessionStore } from './sessionHelpers';
@@ -30,7 +31,7 @@ export function renderHome({ session = homeSession, balance = reply(200, balance
   resetSessionStore();
   useSessionStore.setState({ session });
   connectApiToSession();
-  mockApiRoutes({ balance });
+  mockApiRoutes({ balance, transferList: reply(200, transferListWrapped) });
   return renderRouter(
     {
       _layout: HomeTestStack,
@@ -38,7 +39,7 @@ export function renderHome({ session = homeSession, balance = reply(200, balance
       'nueva-transferencia/index': NewTransferScreen,
       'nueva-transferencia/confirmar': ConfirmTransferScreen,
       'nueva-transferencia/resultado': TransferResultScreen,
-      transferencias: TransfersScreen,
+      transferencias: TransferListScreen,
     },
     { initialUrl: '/' },
   );
@@ -52,10 +53,15 @@ export function balanceResponse(amount: number) {
   });
 }
 
-// Retiene la siguiente respuesta del saldo hasta que el test la suelte.
+// Retiene las peticiones del saldo hasta que el test suelte la respuesta; las demás URL siguen con la simulación previa.
 export function holdNextResponse() {
   const refresh = defer<Response>();
-  jest.mocked(global.fetch).mockImplementation(() => refresh.promise);
+  const previous = jest.mocked(global.fetch).getMockImplementation();
+  jest.mocked(global.fetch).mockImplementation((input, init) => {
+    if (String(input) === API_URLS.balance) return refresh.promise;
+    if (!previous) throw new Error(`fetch recibió una URL no prevista: ${String(input)}`);
+    return previous(input, init);
+  });
   return refresh;
 }
 

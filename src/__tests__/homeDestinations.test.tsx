@@ -10,8 +10,10 @@ import { prepareAppTest, renderApp, seedSession } from '@/test/sessionHelpers';
 
 jest.mock('expo-font', () => ({ useFonts: jest.fn(() => [true, null]) }));
 
-const COMING_SOON = 'Disponible pronto';
-const COMING_SOON_TEXT = 'Esta sección estará lista en breve.';
+const COUNTER = '3 transferencias';
+const SEARCH_LABEL = 'Nombre del destinatario';
+const AMOUNT_CHIP_LABEL = 'Filtro de valor: sin aplicar';
+const DATE_CHIP_LABEL = 'Filtro de fecha: sin aplicar';
 const GREETING = 'Hola, Ana Prueba';
 const FIRST_AMOUNT = 'US$\u00a01.800,00';
 const NEW_AMOUNT = 'US$\u00a02.500,00';
@@ -31,40 +33,43 @@ function nodesOfType(types: string[]) {
 }
 
 // Posición del nodo en el recorrido del árbol, que es el orden de lectura.
-function treeIndex(text: string) {
-  return screen.container.queryAll(() => true).indexOf(screen.getByText(text));
+function treeIndex(node: ReturnType<typeof screen.getByText>) {
+  return screen.container.queryAll(() => true).indexOf(node);
 }
 
 // Abre el destino directamente y espera a que se pinte su contenido.
 async function openDestination(path: string) {
   await renderApp(path);
-  expect(await screen.findByRole('header', { name: COMING_SOON })).toBeOnTheScreen();
+  expect(await screen.findByText(COUNTER)).toBeOnTheScreen();
 }
 
 beforeEach(prepareAppTest);
 afterEach(jest.restoreAllMocks);
 
-describe('destinos provisionales con sesión', () => {
+describe('destinos con sesión', () => {
   beforeEach(() => seedSession(session));
 
   it.each(destinations)(
-    'cada destino muestra Volver, su título y Disponible pronto, sin Salir ni otras acciones ($path)',
+    'cada destino muestra Volver, su título y su contenido, sin Salir ni otras acciones ($path)',
     async ({ path, title }) => {
       await renderApp(path);
 
-      expect(await screen.findByRole('header', { name: COMING_SOON })).toBeOnTheScreen();
+      expect(await screen.findByText(COUNTER)).toBeOnTheScreen();
       expect(screen).toHavePathname(path);
       expect(screen.getByRole('header', { name: title })).toBeOnTheScreen();
-      expect(screen.getByText(COMING_SOON_TEXT)).toBeOnTheScreen();
+      expect(screen.getByLabelText(SEARCH_LABEL)).toBeOnTheScreen();
       expect(screen.getByRole('button', { name: 'Volver' })).toBeOnTheScreen();
-      expect(screen.getAllByRole('button')).toHaveLength(1);
+      // Además de Volver, solo los chips de filtro Valor y Fecha.
+      expect(screen.getByRole('button', { name: AMOUNT_CHIP_LABEL })).toBeOnTheScreen();
+      expect(screen.getByRole('button', { name: DATE_CHIP_LABEL })).toBeOnTheScreen();
+      expect(screen.getAllByRole('button')).toHaveLength(3);
       expect(screen.queryByText('Salir')).toBeNull();
       expect(screen.queryByLabelText('Cerrar sesión')).toBeNull();
     },
   );
 });
 
-describe('destinos provisionales: carga y roles', () => {
+describe('destinos: carga y roles', () => {
   beforeEach(() => seedSession(session));
 
   it.each(destinations)('los destinos no tienen indicador de carga ni recarga ($path)', async ({ path }) => {
@@ -80,13 +85,12 @@ describe('destinos provisionales: carga y roles', () => {
   });
 
   it.each(destinations)(
-    'en los destinos Volver es un botón y el título y Disponible pronto son encabezados ($path)',
+    'en los destinos Volver es un botón y el título es encabezado ($path)',
     async ({ path, title }) => {
       await openDestination(path);
 
       expect(screen.getByRole('button', { name: 'Volver' })).toBeOnTheScreen();
       expect(screen.getByRole('header', { name: title })).toBeOnTheScreen();
-      expect(screen.getByRole('header', { name: COMING_SOON })).toBeOnTheScreen();
       // El logo es decorativo: el lector no lo anuncia.
       expect(accessibleOrder()).not.toContain('BancoXYZ');
     },
@@ -97,13 +101,18 @@ describe('orden de lectura de la cabecera y los destinos', () => {
   beforeEach(() => seedSession(session));
 
   it.each(destinations)(
-    'en los destinos se lee Volver, título, Disponible pronto y el texto ($path)',
+    'en los destinos se lee Volver, título, búsqueda y chips ($path)',
     async ({ path, title }) => {
       await openDestination(path);
 
-      expect(accessibleOrder()).toEqual(['Volver', title, COMING_SOON]);
-      // El texto no tiene rol ni es un elemento accesible propio, así que se comprueba por posición.
-      expect(treeIndex(COMING_SOON_TEXT)).toBeGreaterThan(treeIndex(COMING_SOON));
+      expect(accessibleOrder().slice(0, 4)).toEqual(['Volver', title, AMOUNT_CHIP_LABEL, DATE_CHIP_LABEL]);
+      // El campo de búsqueda y el contador no entran en ese recorrido, así que se comprueban por posición.
+      const search = treeIndex(screen.getByLabelText(SEARCH_LABEL));
+      expect(search).toBeGreaterThan(treeIndex(screen.getByRole('header', { name: title })));
+      expect(search).toBeLessThan(treeIndex(screen.getByRole('button', { name: AMOUNT_CHIP_LABEL })));
+      expect(treeIndex(screen.getByText(COUNTER))).toBeGreaterThan(
+        treeIndex(screen.getByRole('button', { name: DATE_CHIP_LABEL })),
+      );
     },
   );
 

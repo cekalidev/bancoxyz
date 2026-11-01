@@ -62,6 +62,7 @@ const expectedColors = {
   skeletonOnBrand: 'rgba(255, 255, 255, 0.2)',
   scrim: 'rgba(9, 43, 106, 0.48)',
   ripple: 'rgba(33, 0, 111, 0.12)',
+  chipText: '#3C444C',
 };
 
 const expectedGradients = {
@@ -141,6 +142,7 @@ const expectedLayout = {
   loginLogoSize: 48,
   headerLogoSize: 40,
   resultIconSize: 48,
+  listItemMinHeight: 72,
 };
 
 const expectedBorders = { regular: 1, strong: 2 };

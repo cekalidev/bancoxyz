@@ -31,6 +31,58 @@ export const transferListWrapped = {
   transfers: transfersOk,
 };
 
+type TransferItemFields = {
+  name: string;
+  document: string;
+  value: number;
+  currency: string;
+  date: string;
+};
+
+export function transferItem(fields: Partial<TransferItemFields> = {}) {
+  const {
+    name = 'Ronaldo de Assis Moreira',
+    document = '12019910177',
+    value = 1000,
+    currency = 'USD',
+    date = '2024-08-25',
+  } = fields;
+  return { value, date, currency, payeer: { document, name } };
+}
+
+export function transferListOf(items: unknown[]) {
+  return { message: 'OK: Mensagem do servidor 7', transfers: items };
+}
+
+export const transferListEmpty = { direct: [], wrapped: { transfers: [] } };
+
+export const brokenListBodies = {
+  'sin nombre del destinatario': transferListOf([
+    transferItem(),
+    transferItem(),
+    { ...transferItem(), payeer: { document: '11029920288' } },
+  ]),
+  'importe como texto': transferListOf([
+    transferItem(),
+    transferItem(),
+    { ...transferItem(), value: '1000' },
+  ]),
+  'fecha inexistente': transferListOf([
+    transferItem(),
+    transferItem(),
+    transferItem({ date: '2024-02-30' }),
+  ]),
+  'moneda en minúsculas': transferListOf([
+    transferItem(),
+    transferItem(),
+    transferItem({ currency: 'usd' }),
+  ]),
+  'moneda vacía': transferListOf([transferItem(), transferItem(), transferItem({ currency: '' })]),
+  'sin transfers ni lista': { message: 'Sem lista' },
+};
+
+export const serverMessageBody = { message: 'Erro interno 42', transfers: 'x' };
+
 export const loginUnauthorized = { message: 'Unauthorized: Credenciais inválidas' };
 
 export const sessionUnauthorized = { message: 'Token de autenticação inválido.' };

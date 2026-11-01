@@ -6,11 +6,12 @@ import { HomeScreen } from '@/features/home';
 import { connectApiToSession } from '@/features/auth/connectApi';
 import { INITIAL_SESSION_STATE, useSessionStore } from '@/features/auth/sessionStore';
 import { NotFoundScreen, RootLayout } from '@/features/shell';
-import { ConfirmTransferScreen, NewTransferScreen, TransferResultScreen, TransfersScreen } from '@/features/transfers';
+import { TransferListScreen } from '@/features/transfer-list';
+import { ConfirmTransferScreen, NewTransferScreen, TransferResultScreen } from '@/features/transfers';
 import { resetTransfers } from '@/features/transfers/transferActions';
 import type { Session } from '@/services/api/types';
 
-import { balanceOk } from './apiFixtures';
+import { balanceOk, transferListWrapped } from './apiFixtures';
 import { mockApiRoutes, reply } from './fetchMock';
 import { seedStoredValue } from './secureStoreMock';
 
@@ -29,10 +30,10 @@ export function prepareSessionTest(): void {
   connectApiToSession();
 }
 
-// Como `prepareSessionTest`, y además el saldo responde con éxito para los tests que abren el Inicio.
+// Como `prepareSessionTest`, y además el saldo y el listado responden con éxito para los tests que abren el Inicio.
 export function prepareAppTest(): void {
   prepareSessionTest();
-  mockApiRoutes({ balance: reply(200, balanceOk) });
+  mockApiRoutes({ balance: reply(200, balanceOk), transferList: reply(200, transferListWrapped) });
 }
 
 type ScreenStub = () => ReactElement | null;
@@ -47,7 +48,7 @@ export function renderApp(initialUrl: string, login: ScreenStub = LoginScreen, h
       'nueva-transferencia/index': NewTransferScreen,
       'nueva-transferencia/confirmar': ConfirmTransferScreen,
       'nueva-transferencia/resultado': TransferResultScreen,
-      transferencias: TransfersScreen,
+      transferencias: TransferListScreen,
       '+not-found': NotFoundScreen,
     },
     { initialUrl },

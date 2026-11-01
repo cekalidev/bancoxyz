@@ -32,6 +32,7 @@ export type TextFieldProps = ForwardedInputProps & {
   editable?: boolean;
   inputRef?: Ref<TextInputInstance>;
   right?: ReactNode;
+  left?: ReactNode;
   hint?: FieldHintProps;
   prefix?: string;
 };
@@ -58,6 +59,7 @@ export function TextField({
   editable = true,
   inputRef,
   right,
+  left,
   hint,
   prefix,
   ...inputProps
@@ -71,6 +73,7 @@ export function TextField({
         {label}
       </Text>
       <View style={[fieldBoxStyles.box, fieldBoxStyles[state]]}>
+        {left}
         {prefix ? <Prefix text={prefix} /> : null}
         <TextInput
           {...inputProps}
