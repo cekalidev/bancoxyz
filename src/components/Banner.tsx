@@ -6,7 +6,7 @@ import { InfoIcon } from '@/components/icons/InfoIcon';
 import { useAnnouncement } from '@/components/useAnnouncement';
 import { colors, radii, spacing, typography } from '@/theme';
 
-type BannerVariant = 'error' | 'info';
+type BannerVariant = 'error' | 'info' | 'warning';
 type BannerActionProps = {
   label: string;
   onPress: () => void;
@@ -26,6 +26,7 @@ type BannerProps = {
 const tones = {
   error: { Icon: AlertIcon, background: colors.errorBg, text: colors.error },
   info: { Icon: InfoIcon, background: colors.infoBg, text: colors.info },
+  warning: { Icon: AlertIcon, background: colors.warningBg, text: colors.warning },
 } as const;
 
 export function Banner({ variant, message, action, announceKey }: BannerProps) {

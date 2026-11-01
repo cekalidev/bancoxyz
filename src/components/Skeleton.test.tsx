@@ -83,3 +83,83 @@ it('no anima mientras no sabe si hay reducción de movimiento', async () => {
   });
   expect(start).not.toHaveBeenCalled();
 });
+
+const SURFACE_RADIUS = 12;
+
+async function renderSurface(radius?: number) {
+  await render(<Skeleton width="40%" height={20} tone="surface" radius={radius} />);
+}
+
+function highlightStyle() {
+  const layer = screen.root?.children[0];
+  return typeof layer === 'string' ? undefined : StyleSheet.flatten(layer?.props.style);
+}
+
+// El tono de superficie en reposo: la base opaca y la capa de realce encima, transparente.
+function expectSurfaceAtRest() {
+  expect(blockStyle()).toMatchObject({
+    width: '40%',
+    height: 20,
+    borderRadius: SURFACE_RADIUS,
+    overflow: 'hidden',
+    backgroundColor: colors.skeletonBase,
+  });
+  expect(blockStyle()).not.toHaveProperty('opacity');
+  expect(highlightStyle()).toMatchObject({
+    ...StyleSheet.flatten(StyleSheet.absoluteFill),
+    backgroundColor: colors.skeletonHighlight,
+    opacity: 0,
+  });
+}
+
+async function setOpacityOf(value: unknown, opacity: number) {
+  if (!(value instanceof Animated.Value)) throw new Error('El pulso no anima un Animated.Value');
+  await act(async () => value.setValue(opacity));
+}
+
+it('el tono de superficie pulsa del color base al de realce y queda en el base con reducción de movimiento', async () => {
+  mockReducedMotion(false);
+  const timing = jest.spyOn(Animated, 'timing');
+  const { start } = spyLoopStart();
+  await renderSurface(SURFACE_RADIUS);
+
+  expectSurfaceAtRest();
+  const pulse = { duration: HALF_PULSE, useNativeDriver: true };
+  expect(timing.mock.calls.map(([, config]) => config)).toEqual([
+    expect.objectContaining({ ...pulse, toValue: 1 }),
+    expect.objectContaining({ ...pulse, toValue: 0 }),
+  ]);
+  expect(start).toHaveBeenCalledTimes(1);
+  await setOpacityOf(timing.mock.calls[0][0], 0.5);
+  expect(highlightStyle()).toMatchObject({ opacity: 0.5 });
+  expect(blockStyle()).not.toHaveProperty('opacity');
+
+  await screen.unmount();
+  start.mockClear();
+  mockReducedMotion(true);
+  await renderSurface(SURFACE_RADIUS);
+  await act(async () => jest.advanceTimersByTime(motion.skeletonPulse));
+
+  expectSurfaceAtRest();
+  expect(start).not.toHaveBeenCalled();
+});
+
+it('el tono de superficie usa el radio de los esqueletos si no se indica otro', async () => {
+  mockReducedMotion(true);
+  await renderSurface();
+
+  expect(blockStyle()).toMatchObject({ borderRadius: radii.skeleton });
+});
+
+it('el tono de superficie no anima mientras no sabe si hay reducción de movimiento', async () => {
+  const preference = defer<boolean>();
+  jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockReturnValue(preference.promise);
+  const { start } = spyLoopStart();
+  await renderSurface();
+
+  await act(async () => jest.advanceTimersByTime(motion.skeletonPulse));
+
+  expect(blockStyle()).toMatchObject({ backgroundColor: colors.skeletonBase });
+  expect(highlightStyle()).toMatchObject({ opacity: 0 });
+  expect(start).not.toHaveBeenCalled();
+});

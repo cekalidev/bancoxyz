@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { connectApiToSession } from '@/features/auth';
+import { connectTransfersToSession } from '@/features/transfers';
 
 import { AppStack } from './AppStack';
 import { useAppReady } from './useAppReady';
@@ -11,6 +12,7 @@ import { useAppReady } from './useAppReady';
 SplashScreen.preventAutoHideAsync();
 // Once per app load, never on render: reconnecting re-arms the single expiry notice.
 connectApiToSession();
+connectTransfersToSession();
 
 export function RootLayout() {
   const ready = useAppReady();

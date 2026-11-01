@@ -24,10 +24,7 @@ const session: Session = {
   user: { id: 7, name: 'Ana Prueba', email: 'ana@ejemplo.com' },
 };
 
-const destinations = [
-  { path: '/nueva-transferencia', title: 'Nueva transferencia' },
-  { path: '/transferencias', title: 'Transferencias' },
-];
+const destinations = [{ path: '/transferencias', title: 'Transferencias' }];
 
 function nodesOfType(types: string[]) {
   return screen.container.queryAll((node) => types.includes(String(node.type)));

@@ -7,6 +7,9 @@ import { prepareAppTest, renderApp, seedSession } from '@/test/sessionHelpers';
 import { colors, layout, typography } from '@/theme';
 
 jest.mock('expo-font', () => ({ useFonts: jest.fn(() => [true, null]) }));
+jest.mock('@/components/useDatePicker', () =>
+  jest.requireActual<typeof import('@/test/datePickerMock')>('@/test/datePickerMock').datePickerMockFactory(),
+);
 
 const HOME_GREETING = 'Hola, Ana Prueba';
 const LOGIN_TITLE = 'Hola de nuevo';
@@ -42,6 +45,21 @@ describe('pantallas protegidas sin sesión', () => {
     expect(await screen.findByText(LOGIN_TITLE)).toBeOnTheScreen();
     expect(screen).toHavePathname('/login');
     expect(screen.queryByText(HOME_GREETING)).toBeNull();
+  });
+});
+
+describe('pantallas de la transferencia sin sesión', () => {
+  it.each([
+    ['/nueva-transferencia', 'Nueva transferencia'],
+    ['/nueva-transferencia/confirmar', 'Confirmar transferencia'],
+    ['/nueva-transferencia/resultado', 'Transferencia'],
+  ])('sin sesión abrir %s por enlace muestra el login', async (url, headerTitle) => {
+    await renderApp(url);
+
+    expect(await screen.findByText(LOGIN_TITLE)).toBeOnTheScreen();
+    expect(screen).toHavePathname('/login');
+    expect(screen.queryByText(headerTitle)).toBeNull();
+    expect(screen.queryByText('Documento del destinatario')).toBeNull();
   });
 });
 

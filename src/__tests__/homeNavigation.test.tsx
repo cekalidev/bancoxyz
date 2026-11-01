@@ -9,9 +9,13 @@ import { balanceRequests, balanceResponse, settleRequests } from '@/test/homeHel
 import { prepareAppTest, renderApp, seedSession } from '@/test/sessionHelpers';
 
 jest.mock('expo-font', () => ({ useFonts: jest.fn(() => [true, null]) }));
+jest.mock('@/components/useDatePicker', () =>
+  jest.requireActual<typeof import('@/test/datePickerMock')>('@/test/datePickerMock').datePickerMockFactory(),
+);
 
 const COMING_SOON = 'Disponible pronto';
 const GREETING = 'Hola, Ana Prueba';
+const FORM_AVAILABLE = 'Disponible: US$\u00a01.800,00';
 const FIRST_AMOUNT = 'US$ 1.800,00';
 
 const session: Session = {
@@ -52,13 +56,13 @@ afterEach(jest.restoreAllMocks);
 describe('accesos del Inicio', () => {
   beforeEach(() => seedSession(session));
 
-  it('Nueva transferencia abre su destino provisional', async () => {
+  it('Nueva transferencia abre el formulario', async () => {
     await openHome();
 
     await fireEvent.press(screen.getByRole('button', { name: 'Nueva transferencia' }));
 
     expect(screen).toHavePathname('/nueva-transferencia');
-    expect(await screen.findByRole('header', { name: COMING_SOON })).toBeOnTheScreen();
+    expect(await screen.findByLabelText('Valor')).toBeOnTheScreen();
     expect(screen.getByRole('header', { name: 'Nueva transferencia' })).toBeOnTheScreen();
   });
 
@@ -123,7 +127,7 @@ describe('el Inicio mientras carga', () => {
     await fireEvent.press(button);
 
     expect(screen).toHavePathname('/nueva-transferencia');
-    expect(await screen.findByRole('header', { name: COMING_SOON })).toBeOnTheScreen();
+    expect(await screen.findByText(FORM_AVAILABLE)).toBeOnTheScreen();
     firstLoad.resolve(balanceResponse(1800));
     await settleRequests();
   });

@@ -35,3 +35,37 @@ export function toApiDate(date: CalendarDate): string {
 export function calendarDateFromLocal(date: Date): CalendarDate {
   return { year: date.getFullYear(), month: date.getMonth() + 1, day: date.getDate() };
 }
+
+function sign(value: number): -1 | 0 | 1 {
+  if (value < 0) return -1;
+  return value > 0 ? 1 : 0;
+}
+
+function dayNumber({ year, month, day }: CalendarDate): number {
+  return year * 10000 + month * 100 + day;
+}
+
+export function compareDates(a: CalendarDate, b: CalendarDate): -1 | 0 | 1 {
+  return sign(dayNumber(a) - dayNumber(b));
+}
+
+export function isBefore(a: CalendarDate, b: CalendarDate): boolean {
+  return compareDates(a, b) === -1;
+}
+
+export function isSameDate(a: CalendarDate, b: CalendarDate): boolean {
+  return compareDates(a, b) === 0;
+}
+
+export function addOneYear({ year, month, day }: CalendarDate): CalendarDate {
+  const nextYear = year + 1;
+  return { year: nextYear, month, day: Math.min(day, daysInMonth(nextYear, month)) };
+}
+
+export function todayLocal(now = new Date()): CalendarDate {
+  return calendarDateFromLocal(now);
+}
+
+export function toLocalDate({ year, month, day }: CalendarDate): Date {
+  return new Date(year, month - 1, day);
+}

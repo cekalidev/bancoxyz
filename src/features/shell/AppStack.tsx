@@ -2,6 +2,7 @@ import { Stack } from 'expo-router';
 
 import { AppHeader } from '@/components/AppHeader';
 import { LogoutButton, useHasSession } from '@/features/auth';
+import { ConfirmTransferHeader } from '@/features/transfers';
 import { colors } from '@/theme';
 
 // Tipado estructural: solo se usa `goBack` de la navegación que recibe la cabecera.
@@ -13,6 +14,12 @@ const renderHomeHeader = () => <AppHeader right={<LogoutButton />} />;
 function renderNewTransferHeader({ navigation }: BackHeaderProps) {
   return <AppHeader title="Nueva transferencia" onBack={() => navigation.goBack()} />;
 }
+
+function renderConfirmHeader({ navigation }: BackHeaderProps) {
+  return <ConfirmTransferHeader onBack={() => navigation.goBack()} />;
+}
+
+const renderResultHeader = () => <AppHeader title="Transferencia" />;
 
 function renderTransfersHeader({ navigation }: BackHeaderProps) {
   return <AppHeader title="Transferencias" onBack={() => navigation.goBack()} />;
@@ -30,7 +37,9 @@ export function AppStack() {
     >
       <Stack.Protected guard={hasSession} redirectTo="/login">
         <Stack.Screen name="index" options={{ header: renderHomeHeader }} />
-        <Stack.Screen name="nueva-transferencia" options={{ header: renderNewTransferHeader }} />
+        <Stack.Screen name="nueva-transferencia/index" options={{ header: renderNewTransferHeader }} />
+        <Stack.Screen name="nueva-transferencia/confirmar" options={{ header: renderConfirmHeader }} />
+        <Stack.Screen name="nueva-transferencia/resultado" options={{ header: renderResultHeader }} />
         <Stack.Screen name="transferencias" options={{ header: renderTransfersHeader }} />
       </Stack.Protected>
       <Stack.Protected guard={!hasSession} redirectTo="/">

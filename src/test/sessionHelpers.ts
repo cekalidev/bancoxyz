@@ -6,7 +6,8 @@ import { HomeScreen } from '@/features/home';
 import { connectApiToSession } from '@/features/auth/connectApi';
 import { INITIAL_SESSION_STATE, useSessionStore } from '@/features/auth/sessionStore';
 import { NotFoundScreen, RootLayout } from '@/features/shell';
-import { NewTransferScreen, TransfersScreen } from '@/features/transfers';
+import { ConfirmTransferScreen, NewTransferScreen, TransferResultScreen, TransfersScreen } from '@/features/transfers';
+import { resetTransfers } from '@/features/transfers/transferActions';
 import type { Session } from '@/services/api/types';
 
 import { balanceOk } from './apiFixtures';
@@ -24,6 +25,7 @@ export function seedSession(session: Session): void {
 // Se registra con `beforeEach(prepareSessionTest)` en los tests de pantallas y de navegación.
 export function prepareSessionTest(): void {
   resetSessionStore();
+  resetTransfers();
   connectApiToSession();
 }
 
@@ -42,7 +44,9 @@ export function renderApp(initialUrl: string, login: ScreenStub = LoginScreen, h
       _layout: RootLayout,
       index: home,
       login,
-      'nueva-transferencia': NewTransferScreen,
+      'nueva-transferencia/index': NewTransferScreen,
+      'nueva-transferencia/confirmar': ConfirmTransferScreen,
+      'nueva-transferencia/resultado': TransferResultScreen,
       transferencias: TransfersScreen,
       '+not-found': NotFoundScreen,
     },
@@ -54,5 +58,6 @@ export function renderApp(initialUrl: string, login: ScreenStub = LoginScreen, h
 export async function relaunchApp(initialUrl: string, home: ScreenStub = HomeScreen) {
   await screen.unmount();
   resetSessionStore();
+  resetTransfers();
   return renderApp(initialUrl, LoginScreen, home);
 }

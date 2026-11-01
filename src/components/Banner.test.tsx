@@ -117,6 +117,7 @@ describe('Banner anuncio en iOS', () => {
 const variants = [
   { variant: 'error', Icon: AlertIcon, background: colors.errorBg, text: colors.error },
   { variant: 'info', Icon: InfoIcon, background: colors.infoBg, text: colors.info },
+  { variant: 'warning', Icon: AlertIcon, background: colors.warningBg, text: colors.warning },
 ] as const;
 
 async function pathsOfIcon(Icon: typeof AlertIcon) {

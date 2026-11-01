@@ -38,3 +38,11 @@ export const sessionUnauthorized = { message: 'Token de autenticação inválido
 export function balanceBody(amount: number, currency: string) {
   return { accountBalance: amount, currency };
 }
+
+export const transferOk = { status: 'success', message: 'Ok, transferência concluída com sucesso' };
+
+export const transferBodies = {
+  empty: {},
+  withoutStatus: { message: transferOk.message },
+  otherStatus: { status: 'error', message: 'Erro: transferência não concluída' },
+};

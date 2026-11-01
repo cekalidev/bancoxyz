@@ -4,9 +4,11 @@ import { processColor } from 'react-native';
 
 import { AlertIcon } from '@/components/icons/AlertIcon';
 import { BackIcon } from '@/components/icons/BackIcon';
+import { CalendarIcon } from '@/components/icons/CalendarIcon';
 import { EyeIcon } from '@/components/icons/EyeIcon';
 import { EyeOffIcon } from '@/components/icons/EyeOffIcon';
 import { InfoIcon } from '@/components/icons/InfoIcon';
+import { SuccessIcon } from '@/components/icons/SuccessIcon';
 import { colors, layout } from '@/theme';
 
 type IconComponent = ComponentType<{ color: string; size?: number }>;
@@ -21,6 +23,8 @@ const icons: [string, IconComponent][] = [
   ['AlertIcon', AlertIcon],
   ['InfoIcon', InfoIcon],
   ['BackIcon', BackIcon],
+  ['CalendarIcon', CalendarIcon],
+  ['SuccessIcon', SuccessIcon],
 ];
 
 async function observeIcons(size?: number) {

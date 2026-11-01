@@ -1,5 +1,5 @@
 /** @jest-environment node */
-import { readdirSync, readFileSync } from 'node:fs';
+import { readdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 
 import { createLinter, expectError, setupLinter } from '../test/lintHelpers';
@@ -105,8 +105,11 @@ describe('rutas reales de la app', () => {
   it('las rutas reales de la app pasan el lint', async () => {
     const linter = createLinter();
 
-    for (const file of readdirSync(appDir)) {
-      const filePath = path.join(appDir, file);
+    const files = readdirSync(appDir, { encoding: 'utf8', recursive: true })
+      .map((entry) => path.join(appDir, entry))
+      .filter((entry) => /\.tsx?$/.test(entry) && statSync(entry).isFile());
+
+    for (const filePath of files) {
       const [result] = await linter.lintText(readFileSync(filePath, 'utf8'), { filePath });
       expect(result.messages).toEqual([]);
     }

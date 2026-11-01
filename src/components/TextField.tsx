@@ -4,7 +4,10 @@ import { StyleSheet, Text, TextInput, View } from 'react-native';
 import type { TextInputInstance, TextInputProps } from 'react-native';
 
 import { FieldError } from '@/components/FieldError';
-import { borders, colors, layout, radii, spacing, typography } from '@/theme';
+import { FieldHint } from '@/components/FieldHint';
+import type { FieldHintProps } from '@/components/FieldHint';
+import { fieldBoxStyles } from '@/components/fieldBoxStyles';
+import { colors, spacing, typography } from '@/theme';
 
 type ForwardedInputProps = Pick<
   TextInputProps,
@@ -18,6 +21,7 @@ type ForwardedInputProps = Pick<
   | 'onSubmitEditing'
   | 'secureTextEntry'
   | 'placeholder'
+  | 'accessibilityValue'
 >;
 
 export type TextFieldProps = ForwardedInputProps & {
@@ -28,6 +32,8 @@ export type TextFieldProps = ForwardedInputProps & {
   editable?: boolean;
   inputRef?: Ref<TextInputInstance>;
   right?: ReactNode;
+  hint?: FieldHintProps;
+  prefix?: string;
 };
 
 type FieldState = 'rest' | 'focus' | 'error' | 'disabled';
@@ -38,7 +44,24 @@ function fieldState(editable: boolean, error: string | undefined, focused: boole
   return focused ? 'focus' : 'rest';
 }
 
-export function TextField({ label, error, editable = true, inputRef, right, ...inputProps }: TextFieldProps) {
+function Prefix({ text }: { text: string }) {
+  return (
+    <Text accessible={false} importantForAccessibility="no" style={styles.prefix}>
+      {text}
+    </Text>
+  );
+}
+
+export function TextField({
+  label,
+  error,
+  editable = true,
+  inputRef,
+  right,
+  hint,
+  prefix,
+  ...inputProps
+}: TextFieldProps) {
   const [focused, setFocused] = useState(false);
   const state = fieldState(editable, error, focused);
 
@@ -47,7 +70,8 @@ export function TextField({ label, error, editable = true, inputRef, right, ...i
       <Text style={styles.label} accessibilityElementsHidden importantForAccessibility="no">
         {label}
       </Text>
-      <View style={[styles.box, boxStates[state]]}>
+      <View style={[fieldBoxStyles.box, fieldBoxStyles[state]]}>
+        {prefix ? <Prefix text={prefix} /> : null}
         <TextInput
           {...inputProps}
           ref={inputRef}
@@ -61,20 +85,10 @@ export function TextField({ label, error, editable = true, inputRef, right, ...i
         {right}
       </View>
       <FieldError message={error} />
+      {!error && hint ? <FieldHint {...hint} /> : null}
     </View>
   );
 }
-
-const boxStates = StyleSheet.create({
-  rest: { borderWidth: borders.regular, borderColor: colors.border, backgroundColor: colors.background },
-  focus: { borderWidth: borders.strong, borderColor: colors.focus, backgroundColor: colors.background },
-  error: { borderWidth: borders.strong, borderColor: colors.error, backgroundColor: colors.background },
-  disabled: {
-    borderWidth: borders.regular,
-    borderColor: colors.borderSubtle,
-    backgroundColor: colors.surface,
-  },
-});
 
 const styles = StyleSheet.create({
   label: {
@@ -82,12 +96,10 @@ const styles = StyleSheet.create({
     color: colors.text,
     marginBottom: spacing.xs,
   },
-  box: {
-    minHeight: layout.inputHeight,
-    borderRadius: radii.input,
-    paddingHorizontal: spacing.md,
-    flexDirection: 'row',
-    alignItems: 'center',
+  prefix: {
+    ...typography.body,
+    color: colors.textSecondary,
+    marginRight: spacing.xs,
   },
   input: {
     ...typography.body,

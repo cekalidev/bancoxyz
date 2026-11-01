@@ -140,6 +140,7 @@ const expectedLayout = {
   iconSize: 20,
   loginLogoSize: 48,
   headerLogoSize: 40,
+  resultIconSize: 48,
 };
 
 const expectedBorders = { regular: 1, strong: 2 };

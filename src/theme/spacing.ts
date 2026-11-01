@@ -23,4 +23,5 @@ export const layout = {
   iconSize: 20,
   loginLogoSize: 48,
   headerLogoSize: 40,
+  resultIconSize: 48,
 } as const;

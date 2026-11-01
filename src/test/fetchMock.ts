@@ -118,7 +118,7 @@ export function lastFetchCall(): FetchCall {
 
 export type Reply = { status: number; body: unknown } | { raw: string; status: number } | 'pending' | 'networkError';
 
-type ApiRoute = 'login' | 'balance';
+type ApiRoute = 'login' | 'balance' | 'transfer';
 
 export function reply(status: number, body: unknown): Reply {
   return { status, body };

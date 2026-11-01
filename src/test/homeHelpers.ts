@@ -6,7 +6,7 @@ import { AccessibilityInfo, Platform } from 'react-native';
 import { connectApiToSession } from '@/features/auth';
 import { useSessionStore } from '@/features/auth/sessionStore';
 import { HomeScreen } from '@/features/home';
-import { NewTransferScreen, TransfersScreen } from '@/features/transfers';
+import { ConfirmTransferScreen, NewTransferScreen, TransferResultScreen, TransfersScreen } from '@/features/transfers';
 import { API_URLS } from '@/services/api/endpoints';
 import type { Session } from '@/services/api/types';
 
@@ -35,7 +35,9 @@ export function renderHome({ session = homeSession, balance = reply(200, balance
     {
       _layout: HomeTestStack,
       index: HomeScreen,
-      'nueva-transferencia': NewTransferScreen,
+      'nueva-transferencia/index': NewTransferScreen,
+      'nueva-transferencia/confirmar': ConfirmTransferScreen,
+      'nueva-transferencia/resultado': TransferResultScreen,
       transferencias: TransfersScreen,
     },
     { initialUrl: '/' },
