@@ -1,0 +1,10 @@
+appId: com.bancoxyz.app
+---
+- launchApp:
+    clearState: true
+- runFlow: subflows/login.yaml
+- tapOn: "Cerrar sesión"
+- assertVisible: '¿Cerrar sesión\?'
+- tapOn:
+    id: "android:id/button1"
+- assertVisible: "Hola de nuevo"

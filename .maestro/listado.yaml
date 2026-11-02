@@ -1,0 +1,20 @@
+appId: com.bancoxyz.app
+---
+- launchApp:
+    clearState: true
+- runFlow: subflows/login.yaml
+- tapOn: "Ver transferencias"
+- extendedWaitUntil:
+    visible: "Ronaldo de Assis Moreira"
+    timeout: 20000
+- extendedWaitUntil:
+    visible: "Lionel Andres Messi"
+    timeout: 20000
+- extendedWaitUntil:
+    visible: "Federico Valverde"
+    timeout: 20000
+- tapOn: "Nombre del destinatario"
+- inputText: "MESSI"
+- hideKeyboard
+- assertVisible: "1 de 3 transferencias"
+- assertNotVisible: "Federico Valverde"

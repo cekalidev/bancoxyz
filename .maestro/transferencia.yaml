@@ -1,0 +1,22 @@
+appId: com.bancoxyz.app
+---
+- launchApp:
+    clearState: true
+- runFlow: subflows/login.yaml
+- tapOn: "Nueva transferencia"
+- extendedWaitUntil:
+    visible: "Continuar"
+    timeout: 20000
+- tapOn: "Valor"
+- inputText: "100000"
+- hideKeyboard
+- tapOn: "Documento del destinatario"
+- inputText: "12345678909"
+- hideKeyboard
+- copyTextFrom:
+    text: 'Hoy, [0-9]{2}/[0-9]{2}/[0-9]{4}'
+- tapOn: "Continuar"
+- assertVisible: 'US\$.1\.000,00'
+- assertVisible: 'CPF 123\.456\.789-09'
+- assertVisible: "${maestro.copiedText}"
+- back

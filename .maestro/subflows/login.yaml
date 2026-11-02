@@ -1,0 +1,12 @@
+appId: com.bancoxyz.app
+---
+- tapOn: "Correo electrónico"
+- inputText: "gabriel@topaz.com"
+- hideKeyboard
+- tapOn: "Contraseña"
+- inputText: "1111"
+- hideKeyboard
+- tapOn: "Entrar"
+- extendedWaitUntil:
+    visible: "Hola, .+"
+    timeout: 20000
