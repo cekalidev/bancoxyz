@@ -3,6 +3,16 @@
 Aplicación móvil de banca hecha con Expo y React Native: inicio de sesión, consulta del saldo, transferencias
 (también programadas a una fecha futura) y listado de transferencias con búsqueda y filtros.
 
+## Capturas
+
+Capturas de la compilación release en un dispositivo Android.
+
+|            <img src="docs/capturas/login.png" width="220" alt="Pantalla de inicio de sesión">             | <img src="docs/capturas/inicio-saldo.png" width="220" alt="Pantalla de inicio con el saldo disponible"> |  <img src="docs/capturas/nueva-transferencia.png" width="220" alt="Formulario de nueva transferencia">   |
+| :-------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------: |
+|                                             Inicio de sesión                                              |                                           Inicio con el saldo                                           |                                           Nueva transferencia                                            |
+| <img src="docs/capturas/confirmacion.png" width="220" alt="Pantalla de confirmación de la transferencia"> | <img src="docs/capturas/resultado.png" width="220" alt="Pantalla con el resultado de la transferencia"> | <img src="docs/capturas/listado.png" width="220" alt="Listado de transferencias con búsqueda y filtros"> |
+|                                               Confirmación                                                |                                                Resultado                                                |                                        Listado de transferencias                                         |
+
 ## Requisitos
 
 - Node.js 26 y npm 11 (verificado con Node 26.10.0 y npm 11.19.1).
@@ -143,7 +153,7 @@ Las reglas de dependencias entre capas están en `eslint/` y las comprueba `npx 
 
 ## Plataformas
 
-- Android: verificada en el emulador (Android 17, API 37) con la compilación release.
+- Android: verificada con la compilación release en el emulador (Android 17, API 37) y en un dispositivo físico.
 - iOS: solo configurada, sin verificar en un dispositivo.
 
 ## Licencia

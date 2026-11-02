@@ -79,14 +79,14 @@ describe('README: puesta en marcha', () => {
 });
 
 describe('README: plataformas', () => {
-  it('el README indica Android verificado en el emulador con la compilación release, sin afirmar un dispositivo físico, e iOS solo configurado', () => {
+  it('el README indica Android verificado con la compilación release en el emulador y en un dispositivo físico, e iOS solo configurado', () => {
     const platforms = section('Plataformas');
+    const android = platforms.split('\n').find((line) => line.includes('Android')) ?? '';
 
-    expect(platforms).toMatch(/Android/);
-    expect(platforms).toMatch(/verificad[ao]/);
-    expect(platforms).toMatch(/emulador/);
-    expect(platforms).toMatch(/Android[^\n]*verificad[ao] en el emulador[^\n]*compilación release/);
-    expect(platforms).not.toMatch(/dispositivo físico/);
+    expect(android).toMatch(/verificad[ao]/);
+    expect(android).toMatch(/compilación release/);
+    expect(android).toMatch(/emulador/);
+    expect(android).toMatch(/dispositivo físico/);
     expect(platforms).toMatch(/iOS[^\n]*solo configurad[ao]/);
     expect(platforms).toMatch(/sin verificar en un dispositivo/);
   });
