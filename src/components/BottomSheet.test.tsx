@@ -165,6 +165,7 @@ describe('BottomSheet con el aspecto del tema', () => {
       borderTopLeftRadius: radii.card,
       borderTopRightRadius: radii.card,
       padding: layout.screenPadding,
+      maxHeight: layout.sheetMaxHeight,
     });
     const style = StyleSheet.flatten(surface.props.style);
     expect([style.borderRadius, style.borderBottomLeftRadius, style.borderBottomRightRadius]).toEqual([

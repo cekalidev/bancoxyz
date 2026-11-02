@@ -17,6 +17,7 @@ import {
   typeAmount,
   typeDocument,
 } from '@/test/transferHelpers';
+import { pressButton } from '@/test/transferSessionHelpers';
 
 jest.mock('@/components/useDatePicker', () =>
   jest.requireActual<typeof import('@/test/datePickerMock')>('@/test/datePickerMock').datePickerMockFactory(),
@@ -37,8 +38,6 @@ const SENT: TransferDraft = {
 const notice = (minutes: number) => `Ya enviaste una transferencia igual hace ${minutes} min. ¿Quieres enviar otra?`;
 
 afterEach(jest.restoreAllMocks);
-
-const pressButton = (name: string) => fireEvent.press(screen.getByRole('button', { name }));
 
 // Registra un envío con éxito del borrador que terminó hace `ms` milisegundos.
 function sentAgo(ms: number, draft: TransferDraft = SENT) {

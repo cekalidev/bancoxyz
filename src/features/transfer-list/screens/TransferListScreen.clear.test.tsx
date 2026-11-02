@@ -3,8 +3,7 @@ import { StyleSheet } from 'react-native';
 
 import type { CalendarDate } from '@/utils/date';
 
-import { focusedFieldLabels, watchFocus } from '@/test/focus';
-import { spyOnFocusEvents } from '@/test/homeHelpers';
+import { focusedFieldLabels, spyOnFocusEvents, watchFocus } from '@/test/focus';
 import { listRequests, rowNames, typeSearch } from '@/test/transferListHelpers';
 import { applyAmountRange, applyDateRange, renderLoadedList } from '@/test/transferListSheetHelpers';
 import { layout, spacing } from '@/theme';

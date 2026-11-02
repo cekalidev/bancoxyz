@@ -6,8 +6,9 @@ import { ERROR_MESSAGES } from '@/services/api/errors';
 
 import { balanceOk, brokenListBodies, serverMessageBody, transferOk } from './apiFixtures';
 import type { AppStateCapture } from './appStateMock';
-import { defer } from './defer';
 import { mockApiRoutes, reply, type Reply } from './fetchMock';
+import { deferFetch } from './fetchPending';
+import { advancePastTimeout } from './timers';
 
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
 
@@ -19,7 +20,7 @@ export function answerListWith(list: Reply) {
 // Retiene las peticiones del listado hasta que el test suelte la respuesta; las demás URL siguen igual.
 // Mientras no se suelte, no hay que llamar a `settleRequests`: esperaría a esta respuesta.
 export function holdNextList() {
-  const held = defer<Response>();
+  const held = deferFetch();
   const previous = jest.mocked(global.fetch).getMockImplementation();
   jest.mocked(global.fetch).mockImplementation((input, init) => {
     if (String(input) === API_URLS.transferList) return held.promise;
@@ -56,6 +57,9 @@ export async function flushResponses() {
 const NETWORK = ERROR_MESSAGES.network;
 const UNKNOWN = ERROR_MESSAGES.unknown;
 
+// Las tres transferencias reales del listado, en el orden en que se muestran.
+export const REAL_NAMES = ['Ronaldo de Assis Moreira', 'Lionel Andres Messi', 'Federico Valverde'];
+
 export type ListFailure = { cause: string; list: Reply; message: string };
 
 // Causas de fallo del listado (salvo el 401) con el mensaje que se ve.
@@ -74,7 +78,8 @@ export const listFailures: ListFailure[] = [
 // Deja terminar la petición fallida; sin respuesta, espera los 15 s del tope.
 export async function settleFailure(list: Reply) {
   await act(async () => {
-    await jest.advanceTimersByTimeAsync(list === 'pending' ? 15000 : 0);
+    if (list === 'pending') await advancePastTimeout();
+    else await jest.advanceTimersByTimeAsync(0);
   });
   await flushResponses();
 }

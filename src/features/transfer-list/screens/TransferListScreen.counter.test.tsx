@@ -3,7 +3,7 @@ import { AccessibilityInfo, Platform } from 'react-native';
 
 import type { CalendarDate } from '@/utils/date';
 
-import { spyOnFocusEvents } from '@/test/homeHelpers';
+import { spyOnFocusEvents } from '@/test/focus';
 import { listRequests, typeSearch } from '@/test/transferListHelpers';
 import { applyAmountRange, applyDateRange, renderLoadedList } from '@/test/transferListSheetHelpers';
 

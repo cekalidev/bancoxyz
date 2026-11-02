@@ -6,7 +6,7 @@ import { configureApi } from '@/services/api/client';
 import type { Session } from '@/services/api/types';
 import { SESSION_KEY } from '@/services/storage/sessionStorage';
 import { sessionUnauthorized } from '@/test/apiFixtures';
-import { mockFetchPendingEach, type PendingEachFetch } from '@/test/fetchMock';
+import { mockFetchPendingEach, type PendingEachFetch } from '@/test/fetchPending';
 import {
   holdNextWrite,
   seedStoredValue,

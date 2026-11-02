@@ -47,10 +47,12 @@ export function Button({
   );
 }
 
+// Con fuente grande la etiqueta puede partirse en dos líneas: la píldora crece desde su alto mínimo.
 const pill = {
-  height: layout.buttonHeight,
+  minHeight: layout.buttonHeight,
   borderRadius: radii.pill,
   paddingHorizontal: spacing.xl,
+  paddingVertical: spacing.sm,
   overflow: 'hidden',
   alignItems: 'center',
   justifyContent: 'center',

@@ -1,11 +1,7 @@
 import { balanceOk } from '@/test/apiFixtures';
-import {
-  mockFetchNetworkError,
-  mockFetchPending,
-  mockFetchPendingIgnoringAbort,
-  mockFetchRawBody,
-  mockFetchResponse,
-} from '@/test/fetchMock';
+import { mockFetchNetworkError, mockFetchRawBody, mockFetchResponse } from '@/test/fetchMock';
+import { mockFetchPending, mockFetchPendingIgnoringAbort } from '@/test/fetchPending';
+import { advancePastTimeout } from '@/test/timers';
 
 import { getBalance } from './balance';
 import { configureApi } from './client';
@@ -121,7 +117,7 @@ describe('tiempo máximo de respuesta', () => {
     const onSettled = jest.fn();
     void outcome.then(onSettled);
 
-    await jest.advanceTimersByTimeAsync(15000);
+    await advancePastTimeout();
     expect(onSettled).toHaveBeenCalledTimes(1);
 
     server.resolve(200, { status: 'success' });

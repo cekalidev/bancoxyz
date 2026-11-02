@@ -1,5 +1,6 @@
 import Svg, { Path } from 'react-native-svg';
 
+import { hiddenFromReader } from '@/components/hiddenFromReader';
 import { borders, layout } from '@/theme';
 
 type ListIconProps = { color: string; size?: number };
@@ -15,8 +16,7 @@ export function ListIcon({ color, size = layout.iconSize }: ListIconProps) {
       strokeWidth={borders.strong}
       strokeLinecap="round"
       strokeLinejoin="round"
-      accessible={false}
-      importantForAccessibility="no-hide-descendants"
+      {...hiddenFromReader}
     >
       <Path d="M9 6H20" />
       <Path d="M9 12H20" />

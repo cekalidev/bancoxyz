@@ -2,17 +2,26 @@ import type { ReactNode } from 'react';
 import { Image, type ImageProps, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { hiddenFromReader } from '@/components/hiddenFromReader';
 import { BackIcon } from '@/components/icons/BackIcon';
 import { colors, layout, spacing, typography } from '@/theme';
 
 type AppHeaderProps = { right?: ReactNode; title?: string; onBack?: () => void };
 
-type LogoA11y = Pick<ImageProps, 'accessible' | 'importantForAccessibility'>;
+type LogoA11y = Pick<ImageProps, 'accessible' | 'accessibilityRole' | 'importantForAccessibility'>;
 
-const DEFAULT_TITLE = 'BancoXYZ';
+const BRAND_TITLE = 'BancoXYZ';
 // Con «Volver» el logo es decorativo para que se lea primero el botón y luego el título.
 const DECORATIVE_LOGO: LogoA11y = { accessible: false, importantForAccessibility: 'no-hide-descendants' };
 const LABELED_LOGO: LogoA11y = { accessible: true };
+// Con el título de la marca el logo ya dice «BancoXYZ»: se anuncia como imagen y el título no se repite.
+const BRAND_LOGO: LogoA11y = { accessible: true, accessibilityRole: 'image' };
+const HEADER_TITLE = { accessibilityRole: 'header' } as const;
+
+function logoA11yFor(isBrand: boolean, hasBack: boolean) {
+  if (isBrand) return BRAND_LOGO;
+  return hasBack ? DECORATIVE_LOGO : LABELED_LOGO;
+}
 
 function BackButton({ onPress }: { onPress: () => void }) {
   return (
@@ -22,14 +31,15 @@ function BackButton({ onPress }: { onPress: () => void }) {
   );
 }
 
-export function AppHeader({ right, title = DEFAULT_TITLE, onBack }: AppHeaderProps) {
+export function AppHeader({ right, title = BRAND_TITLE, onBack }: AppHeaderProps) {
   const insets = useSafeAreaInsets();
   const hasBack = onBack !== undefined;
-  const logoA11y = hasBack ? DECORATIVE_LOGO : LABELED_LOGO;
+  const isBrand = title === BRAND_TITLE;
+  const logoA11y = logoA11yFor(isBrand, hasBack);
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <View style={[styles.bar, hasBack ? styles.barGrows : styles.barFixed]}>
+      <View style={styles.bar}>
         {hasBack ? <BackButton onPress={onBack} /> : null}
         <Image
           source={require('../../assets/logo-header.png')}
@@ -37,7 +47,7 @@ export function AppHeader({ right, title = DEFAULT_TITLE, onBack }: AppHeaderPro
           accessibilityLabel="BancoXYZ"
           {...logoA11y}
         />
-        <Text accessibilityRole="header" style={styles.title}>
+        <Text {...(isBrand ? hiddenFromReader : HEADER_TITLE)} style={styles.title}>
           {title}
         </Text>
         {right}
@@ -50,18 +60,13 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.background,
   },
+  // Con fuente grande el título puede ocupar dos líneas sin cortarse: la barra crece desde su alto mínimo.
   bar: {
+    minHeight: layout.appBarHeight,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
     paddingHorizontal: layout.screenPadding,
-  },
-  barFixed: {
-    height: layout.appBarHeight,
-  },
-  // Con fuente grande el título puede ocupar dos líneas sin cortarse.
-  barGrows: {
-    minHeight: layout.appBarHeight,
   },
   back: {
     width: layout.minTouch,

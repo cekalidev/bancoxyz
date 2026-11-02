@@ -7,7 +7,6 @@ import { layout, radii, spacing, typography } from '@/theme';
 import { ListSeparator } from './ListSeparator';
 import { TransferListItemSkeleton } from './TransferListItemSkeleton';
 
-const CHIP_WIDTH = 88;
 const ROWS = 6;
 
 // Carga del listado: la forma de la búsqueda, los chips, el contador y las filas separadas como en la lista,
@@ -45,10 +44,21 @@ function HeaderSkeleton({ fontScale }: { fontScale: number }) {
         <Skeleton width="100%" height={layout.inputHeight} radius={radii.input} tone="surface" />
       </View>
       <View style={styles.chips}>
-        <Skeleton width={CHIP_WIDTH} height={layout.chipHeight} radius={radii.pill} tone="surface" />
-        <Skeleton width={CHIP_WIDTH} height={layout.chipHeight} radius={radii.pill} tone="surface" />
+        <ChipSkeleton />
+        <ChipSkeleton />
       </View>
     </View>
+  );
+}
+
+function ChipSkeleton() {
+  return (
+    <Skeleton
+      width={layout.chipSkeletonWidth}
+      height={layout.chipHeight}
+      radius={radii.pill}
+      tone="surface"
+    />
   );
 }
 

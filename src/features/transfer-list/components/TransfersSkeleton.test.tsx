@@ -100,7 +100,7 @@ it('tiene la búsqueda, dos chips, el contador y seis filas con sus formas', asy
     { width: '40%', height: typography.label.lineHeight * fontScale, borderRadius: radii.skeleton },
     { width: '100%', height: layout.inputHeight, borderRadius: radii.input },
   ]);
-  const chip = { width: 88, height: layout.chipHeight, borderRadius: radii.pill };
+  const chip = { width: layout.chipSkeletonWidth, height: layout.chipHeight, borderRadius: radii.pill };
   expect(chips.map(shapeOf)).toEqual([chip, chip]);
   // Mismo espacio vertical que la fila real de chips: el listado no salta al terminar la carga.
   expect(styleOf(chipsBox)).toMatchObject({ paddingVertical: spacing.xxs });

@@ -5,7 +5,8 @@ import { ERROR_MESSAGES } from '@/services/api/errors';
 import { readingOrder } from './a11yTree';
 import { transferListEmpty } from './apiFixtures';
 import { reply } from './fetchMock';
-import { renderTransferList, settleRequests } from './transferListHelpers';
+import { settleRequests } from './homeHelpers';
+import { renderTransferList } from './transferListHelpers';
 import { answerListWith, settleFailure, visitNewTransferAndBack } from './transferListRefreshHelpers';
 
 export const NETWORK_MESSAGE = ERROR_MESSAGES.network;

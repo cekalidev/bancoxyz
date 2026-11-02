@@ -1,10 +1,11 @@
-import { act, userEvent } from '@testing-library/react-native';
+import { userEvent } from '@testing-library/react-native';
 import { screen, testRouter } from 'expo-router/testing-library';
-import { Alert, type AlertButton } from 'react-native';
 
 import { useSessionStore } from '@/features/auth/sessionStore';
 import { ERROR_MESSAGES } from '@/services/api/errors';
 import type { Session } from '@/services/api/types';
+import { politeRegions } from '@/test/a11yTree';
+import { chooseInDialog, spyOnAlert } from '@/test/dialog';
 import { focusedFieldLabels, watchFocus } from '@/test/focus';
 import { failDeletes, resetSecureStore, storedValue } from '@/test/secureStoreMock';
 import {
@@ -29,31 +30,11 @@ const session: Session = {
   user: { id: 7, name: 'Ana Prueba', email: 'ana@ejemplo.com' },
 };
 
-function spyOnAlert() {
-  return jest.spyOn(Alert, 'alert').mockImplementation(() => undefined);
-}
-
 async function openHomeAndPressLogout() {
   seedSession(session);
   await renderApp('/');
   const user = userEvent.setup();
   await user.press(await screen.findByRole('button', { name: LOGOUT_LABEL }));
-}
-
-function dialogButton(alert: ReturnType<typeof spyOnAlert>, text: string): AlertButton {
-  const buttons = alert.mock.calls[0]?.[2] ?? [];
-  const button = buttons.find((candidate) => candidate.text === text);
-  if (!button) throw new Error(`El diálogo no tiene el botón ${text}`);
-  return button;
-}
-
-async function chooseInDialog(alert: ReturnType<typeof spyOnAlert>, text: string) {
-  const button = dialogButton(alert, text);
-  await act(async () => button.onPress?.());
-}
-
-function politeRegions() {
-  return screen.container.queryAll((node) => node.props.accessibilityLiveRegion === 'polite');
 }
 
 beforeEach(prepareAppTest);

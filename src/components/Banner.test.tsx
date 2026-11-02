@@ -4,12 +4,11 @@ import { AccessibilityInfo, Platform, processColor, StyleSheet } from 'react-nat
 import { Banner } from '@/components/Banner';
 import { AlertIcon } from '@/components/icons/AlertIcon';
 import { InfoIcon } from '@/components/icons/InfoIcon';
+import { pathsOf, pathsOfIcon, strokeColorsOf } from '@/test/iconPaths';
 import { colors, radii, spacing, typography } from '@/theme';
 
 const MESSAGE = 'Correo o contraseña incorrectos.';
 const EXPIRED_MESSAGE = 'Tu sesión expiró. Inicia sesión de nuevo.';
-
-type Node = ReturnType<typeof getRegion>;
 
 function spyOnAnnouncements() {
   const announce = jest.spyOn(AccessibilityInfo, 'announceForAccessibility');
@@ -22,14 +21,6 @@ function getRegion() {
 
   expect(regions).toHaveLength(1);
   return regions[0];
-}
-
-function pathsOf(node: Node) {
-  return node.queryAll((child) => typeof child.props.d === 'string').map((child) => child.props.d);
-}
-
-function strokeColorsOf(node: Node) {
-  return node.queryAll((child) => child.props.stroke !== undefined).map((child) => child.props.stroke.payload);
 }
 
 afterEach(() => {
@@ -120,17 +111,9 @@ const variants = [
   { variant: 'warning', Icon: AlertIcon, background: colors.warningBg, text: colors.warning },
 ] as const;
 
-async function pathsOfIcon(Icon: typeof AlertIcon) {
-  const { root, unmount } = await render(<Icon color={colors.text} />);
-  const paths = root ? pathsOf(root) : [];
-
-  await unmount();
-  return paths;
-}
-
 describe('Banner variantes', () => {
   it.each(variants)('el aviso $variant muestra su icono, su fondo y su texto', async (tone) => {
-    const iconPaths = await pathsOfIcon(tone.Icon);
+    const iconPaths = await pathsOfIcon(tone.Icon, colors.text);
     await render(<Banner variant={tone.variant} message={MESSAGE} />);
     const region = getRegion();
     const row = screen.getByText(MESSAGE).parent;

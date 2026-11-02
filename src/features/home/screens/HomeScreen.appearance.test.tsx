@@ -4,24 +4,16 @@ import { Appearance, StyleSheet, useColorScheme } from 'react-native';
 
 import { balanceBody } from '@/test/apiFixtures';
 import { mockApiRoutes, reply } from '@/test/fetchMock';
-import { homeSession, renderHome } from '@/test/homeHelpers';
+import { homeSession, renderHome, settleRequests } from '@/test/homeHelpers';
+import { SPINNER_TYPES } from '@/test/spinners';
 import { colors } from '@/theme';
 
 const SCROLL_TYPES = ['RCTScrollView'];
 const REFRESH_TYPES = ['RCTRefreshControl', 'AndroidSwipeRefreshLayout'];
-const SPINNER_TYPES = ['RCTActivityIndicatorView', 'AndroidProgressBar', 'ActivityIndicator'];
 const AMOUNT = 'US$\u00a01.800,00';
 const WIDE_AMOUNT = 'US$\u00a01.234.567,89';
 
 type Node = ReturnType<typeof screen.getByText>;
-
-// Deja que termine la petición del saldo y las actualizaciones que provoca.
-async function settleRequests() {
-  await act(async () => {
-    await Promise.allSettled(jest.mocked(global.fetch).mock.results.map((result) => result.value));
-    await jest.advanceTimersByTimeAsync(0);
-  });
-}
 
 function nodesOfType(types: string[]) {
   return screen.container.queryAll((node) => types.includes(String(node.type)));

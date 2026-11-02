@@ -1,8 +1,8 @@
 import { screen } from 'expo-router/testing-library';
-import { AccessibilityInfo } from 'react-native';
 
 import type { FinishedOutcome, TransferAttempt } from '@/features/transfers/types';
-import { accessibleOrder, exposedStrings } from '@/test/a11yTree';
+import { accessibleOrder, exposedStrings, treeIndex } from '@/test/a11yTree';
+import { spyOnFocusedNodes } from '@/test/focus';
 import { settleRequests } from '@/test/homeHelpers';
 import { openResult, renderTransferFlow, TRANSFER_NOW } from '@/test/transferHelpers';
 import type { CalendarDate } from '@/utils/date';
@@ -52,21 +52,6 @@ const RESULTS = [
     ],
   },
 ];
-
-type FocusedNode = { props: { accessibilityRole?: string; children?: unknown } };
-
-function isFocusedNode(node: unknown): node is FocusedNode {
-  return typeof node === 'object' && node !== null && 'props' in node;
-}
-
-// Nodos a los que se pidió mover el foco del lector de pantalla.
-function spyOnFocusedNodes() {
-  const sendEvent = jest.spyOn(AccessibilityInfo, 'sendAccessibilityEvent').mockClear();
-  return () =>
-    sendEvent.mock.calls
-      .filter(([, type]) => type === 'focus')
-      .map(([node]) => (isFocusedNode(node) ? node.props : undefined));
-}
 
 afterEach(jest.restoreAllMocks);
 
@@ -118,11 +103,6 @@ describe('TransferResultScreen: foco', () => {
 function resultReadingOrder() {
   const order = accessibleOrder();
   return order.slice(order.lastIndexOf('BancoXYZ'));
-}
-
-// Posición del nodo en el recorrido del árbol, que es el orden visual.
-function treeIndex(node: ReturnType<typeof screen.getByText>) {
-  return screen.container.queryAll(() => true).indexOf(node);
 }
 
 describe('TransferResultScreen: orden de lectura', () => {

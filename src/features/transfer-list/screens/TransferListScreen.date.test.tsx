@@ -2,14 +2,8 @@ import { act, fireEvent, screen } from 'expo-router/testing-library';
 
 import type { CalendarDate } from '@/utils/date';
 
-import {
-  applySheet,
-  listRequests,
-  openSheet,
-  rowNames,
-  showSheet,
-  spyOnReaderFocus,
-} from '@/test/transferListHelpers';
+import { spyOnReaderFocus } from '@/test/focus';
+import { applySheet, listRequests, openSheet, rowNames, showSheet } from '@/test/transferListHelpers';
 import { dismissPicker, lastPickerRequest } from '@/test/datePickerMock';
 import { DATE_RANGE_CASES } from '@/test/dateRangeCases';
 import {

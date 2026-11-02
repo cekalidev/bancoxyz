@@ -1,13 +1,16 @@
-import { act, fireEvent, screen } from 'expo-router/testing-library';
+import { act, screen } from 'expo-router/testing-library';
 
 import { REJECTED_MESSAGE } from '@/features/transfers/transferText';
 import { useTransferStore } from '@/features/transfers/transferStore';
 import { ERROR_MESSAGES } from '@/services/api/errors';
 import { exposedStrings } from '@/test/a11yTree';
 import { transferBodies, transferOk } from '@/test/apiFixtures';
-import { mockFetchPendingIgnoringAbort, reply, type Reply } from '@/test/fetchMock';
+import { reply, type Reply } from '@/test/fetchMock';
+import { mockFetchPendingIgnoringAbort } from '@/test/fetchPending';
 import { settleRequests } from '@/test/homeHelpers';
+import { advancePastTimeout } from '@/test/timers';
 import { goToConfirm, renderTransferFlow } from '@/test/transferHelpers';
+import { pressButton } from '@/test/transferSessionHelpers';
 
 jest.mock('@/components/useDatePicker', () =>
   jest.requireActual<typeof import('@/test/datePickerMock')>('@/test/datePickerMock').datePickerMockFactory(),
@@ -24,8 +27,7 @@ const LINES = [
 
 afterEach(jest.restoreAllMocks);
 
-const pressButton = (name: string) => fireEvent.press(screen.getByRole('button', { name }));
-const waitTimeout = () => act(() => jest.advanceTimersByTimeAsync(15000));
+const waitTimeout = () => act(() => advancePastTimeout());
 
 // Llega a la confirmación con 1.250,00 al CPF de prueba para hoy y confirma.
 async function openConfirmation(transfer?: Reply) {

@@ -1,9 +1,10 @@
-import { fireEvent, screen } from 'expo-router/testing-library';
+import { screen } from 'expo-router/testing-library';
 
 import { exposedStrings } from '@/test/a11yTree';
 import { sessionUnauthorized, transferListWrapped, transfersOk } from '@/test/apiFixtures';
 import { captureAppState, type AppStateCapture } from '@/test/appStateMock';
 import { reply } from '@/test/fetchMock';
+import { settleRequests } from '@/test/homeHelpers';
 import { secureStoreModule, storedValue } from '@/test/secureStoreMock';
 import { prepareAppTest, relaunchApp, renderApp, seedSession } from '@/test/sessionHelpers';
 import {
@@ -12,12 +13,11 @@ import {
   listSession,
   renderTransferList,
   rowNames,
-  settleRequests,
   typeSearch,
 } from '@/test/transferListHelpers';
 import { answerListWith, holdNextList, returnFromBackground } from '@/test/transferListRefreshHelpers';
 import { applyAmountRange } from '@/test/transferListSheetHelpers';
-import { logOut, signIn, waitForHome } from '@/test/transferSessionHelpers';
+import { logOut, pressButton, signIn, waitForHome } from '@/test/transferSessionHelpers';
 
 jest.mock('expo-font', () => ({ useFonts: jest.fn(() => [true, null]) }));
 jest.mock('@/components/useDatePicker', () =>
@@ -37,8 +37,6 @@ function spyOnLogs() {
   const spies = CONSOLE_METHODS.map((method) => jest.spyOn(console, method));
   return () => spies.flatMap((spy) => spy.mock.calls.map((args) => args.map((arg) => JSON.stringify(arg)).join(' ')));
 }
-
-const pressButton = (name: string) => fireEvent.press(screen.getByRole('button', { name }));
 
 // Desde el Inicio entra al listado y deja aplicados «mes» y el rango 2.000,00–4.000,00.
 async function filterList() {

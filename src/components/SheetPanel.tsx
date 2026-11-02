@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   panel: {
-    maxHeight: '90%',
+    maxHeight: layout.sheetMaxHeight,
     backgroundColor: colors.background,
     borderTopLeftRadius: radii.card,
     borderTopRightRadius: radii.card,

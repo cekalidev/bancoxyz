@@ -3,28 +3,19 @@ import { act, fireEvent, screen, testRouter } from 'expo-router/testing-library'
 
 import { ERROR_MESSAGES } from '@/services/api/errors';
 
+import { treeIndex } from '@/test/a11yTree';
 import { balanceBody, balanceOk, transferOk } from '@/test/apiFixtures';
 import { captureAppState } from '@/test/appStateMock';
-import { defer } from '@/test/defer';
-import { mockFetchPendingEach, reply, type Reply } from '@/test/fetchMock';
-import { focusedFieldLabels, watchFocus } from '@/test/focus';
-import { balanceRequests, balanceResponse, settleRequests, spyOnFocusEvents } from '@/test/homeHelpers';
+import { reply, type Reply } from '@/test/fetchMock';
+import { deferFetch, mockFetchPendingEach } from '@/test/fetchPending';
+import { focusedFieldLabels, spyOnFocusEvents, watchFocus } from '@/test/focus';
+import { balanceRequests, balanceResponse, settleRequests } from '@/test/homeHelpers';
+import { querySpinners } from '@/test/spinners';
 import { formBalanceRequests, goToConfirm, renderTransferFlow, transferSession } from '@/test/transferHelpers';
 
 jest.mock('@/components/useDatePicker', () =>
   jest.requireActual<typeof import('@/test/datePickerMock')>('@/test/datePickerMock').datePickerMockFactory(),
 );
-
-const SPINNER_TYPES = ['RCTActivityIndicatorView', 'AndroidProgressBar', 'ActivityIndicator'];
-
-function querySpinners() {
-  return screen.container.queryAll((node) => SPINNER_TYPES.includes(String(node.type)));
-}
-
-// Posición del nodo en el recorrido del árbol, que es el orden visual.
-function treeIndex(node: ReturnType<typeof screen.getByText>) {
-  return screen.container.queryAll(() => true).indexOf(node);
-}
 
 afterEach(jest.restoreAllMocks);
 
@@ -121,7 +112,7 @@ describe('NewTransferScreen: respuestas tras salir', () => {
     ['éxito con otra cifra', true],
     ['sin red', false],
   ])('una respuesta que llega tras salir no cambia nada, tampoco en un formulario abierto después: «%s»', async (_case, ok) => {
-    const stale = defer<Response>();
+    const stale = deferFetch();
     jest
       .spyOn(global, 'fetch')
       .mockImplementationOnce(async () => balanceResponse(1800))

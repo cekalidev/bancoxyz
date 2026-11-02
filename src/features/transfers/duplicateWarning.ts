@@ -1,9 +1,7 @@
 import { toApiDate } from '@/utils/date';
 
+import { MINUTE_MS, TRANSFER_WINDOW_MS } from './transferWindow';
 import type { TransferAttempt, TransferDraft } from './types';
-
-const MINUTE_MS = 60000;
-const WINDOW_MS = 10 * MINUTE_MS;
 
 export function sameTransfer(a: TransferDraft, b: TransferDraft): boolean {
   return (
@@ -24,10 +22,8 @@ export function findRecentDuplicate(
   now: number,
 ): { minutes: number } | null {
   const finishTimes = attempts
-    .filter((attempt) => sameTransfer(attempt.draft, draft) && now - attempt.finishedAt < WINDOW_MS)
+    .filter((attempt) => sameTransfer(attempt.draft, draft) && now - attempt.finishedAt < TRANSFER_WINDOW_MS)
     .map((attempt) => attempt.finishedAt);
 
-  return finishTimes.length === 0
-    ? null
-    : { minutes: wholeMinutesSince(Math.max(...finishTimes), now) };
+  return finishTimes.length === 0 ? null : { minutes: wholeMinutesSince(Math.max(...finishTimes), now) };
 }

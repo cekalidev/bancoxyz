@@ -1,10 +1,10 @@
 import { userEvent } from '@testing-library/react-native';
 import { router } from 'expo-router';
 import { act, screen } from 'expo-router/testing-library';
-import { Alert, type AlertButton } from 'react-native';
 
 import { ERROR_MESSAGES } from '@/services/api/errors';
 import { balanceOk, loginOk, sessionUnauthorized, transferListWrapped } from '@/test/apiFixtures';
+import { chooseInLastDialog, spyOnAlert } from '@/test/dialog';
 import { mockApiRoutes, reply } from '@/test/fetchMock';
 import { balanceRequests, settleRequests, spyOnAnnouncements } from '@/test/homeHelpers';
 import { secureStoreModule, storedValue } from '@/test/secureStoreMock';
@@ -22,17 +22,6 @@ const SHOW = 'Mostrar saldo';
 const EXPIRED = ERROR_MESSAGES.unauthorized;
 const HOME_NOTICES = [ERROR_MESSAGES.network, ERROR_MESSAGES.unknown];
 const EXPIRED_REPLY = reply(401, sessionUnauthorized);
-
-function spyOnAlert() {
-  return jest.spyOn(Alert, 'alert').mockImplementation(() => undefined);
-}
-
-async function chooseInDialog(alert: ReturnType<typeof spyOnAlert>, text: string) {
-  const buttons: AlertButton[] = alert.mock.calls.at(-1)?.[2] ?? [];
-  const button = buttons.find((candidate) => candidate.text === text);
-  if (!button) throw new Error(`El diálogo no tiene el botón ${text}`);
-  await act(async () => button.onPress?.());
-}
 
 // Espera al saludo y a que terminen las peticiones del Inicio recién abierto.
 async function waitForHome() {
@@ -58,7 +47,7 @@ async function openHomeWithSession() {
 async function logoutAndLoginAgain() {
   const alert = spyOnAlert();
   await userEvent.press(screen.getByRole('button', { name: 'Cerrar sesión' }));
-  await chooseInDialog(alert, 'Salir');
+  await chooseInLastDialog(alert, 'Salir');
   await loginWithCredentials();
 }
 

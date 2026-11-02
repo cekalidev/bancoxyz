@@ -1,7 +1,7 @@
 import { act, fireEvent, screen } from 'expo-router/testing-library';
 
-import { focusedFieldLabels, watchFocus } from '@/test/focus';
-import { settleRequests, spyOnFocusEvents } from '@/test/homeHelpers';
+import { focusedFieldLabels, spyOnFocusEvents, watchFocus } from '@/test/focus';
+import { settleRequests } from '@/test/homeHelpers';
 import {
   chooseDate,
   fillValidForm,

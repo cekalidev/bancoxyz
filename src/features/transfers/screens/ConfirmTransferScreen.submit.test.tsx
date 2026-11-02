@@ -2,7 +2,8 @@ import { act, fireEvent, screen } from 'expo-router/testing-library';
 
 import { transferOk } from '@/test/apiFixtures';
 import { captureAppState } from '@/test/appStateMock';
-import { mockFetchPendingEach, reply, type Reply } from '@/test/fetchMock';
+import { reply, type Reply } from '@/test/fetchMock';
+import { mockFetchPendingEach } from '@/test/fetchPending';
 import { settleRequests } from '@/test/homeHelpers';
 import {
   chooseDate,
@@ -13,6 +14,7 @@ import {
   transferRequests,
   typeAmount,
 } from '@/test/transferHelpers';
+import { pressButton } from '@/test/transferSessionHelpers';
 import type { CalendarDate } from '@/utils/date';
 
 jest.mock('@/components/useDatePicker', () =>
@@ -20,8 +22,6 @@ jest.mock('@/components/useDatePicker', () =>
 );
 
 afterEach(jest.restoreAllMocks);
-
-const pressButton = (name: string) => fireEvent.press(screen.getByRole('button', { name }));
 
 type FormInput = { digits: string; document: string; date?: CalendarDate; transfer?: Reply };
 

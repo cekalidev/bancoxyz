@@ -81,3 +81,22 @@ export function exposedStrings(root: TreeNode = screen.container): string[] {
   visit(root);
   return strings;
 }
+
+type HostNode = ReturnType<typeof screen.getByText>;
+
+// Posición del nodo en el recorrido del árbol, que es el orden visual y de lectura.
+export function treeIndex(node: HostNode): number {
+  return screen.container.queryAll(() => true).indexOf(node);
+}
+
+// Los nodos aparecen en el árbol en el orden dado y cada uno es distinto.
+export function expectInTreeOrder(nodes: HostNode[]) {
+  const positions = nodes.map(treeIndex);
+  expect(positions).toEqual([...positions].sort((a, b) => a - b));
+  expect(new Set(positions).size).toBe(nodes.length);
+}
+
+// Regiones que se anuncian solas (Android, `accessibilityLiveRegion` cortés) montadas en este momento.
+export function politeRegions() {
+  return screen.container.queryAll((node) => node.props.accessibilityLiveRegion === 'polite');
+}

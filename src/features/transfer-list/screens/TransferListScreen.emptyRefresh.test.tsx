@@ -1,11 +1,12 @@
 import { fireEvent, screen } from 'expo-router/testing-library';
 
 import { ERROR_MESSAGES } from '@/services/api/errors';
+import { treeIndex } from '@/test/a11yTree';
 import { transferListEmpty, transferListOf, transfersOk } from '@/test/apiFixtures';
 import { captureAppState, type AppStateCapture } from '@/test/appStateMock';
 import { reply } from '@/test/fetchMock';
-import { spyOnAnnouncements } from '@/test/homeHelpers';
-import { listRequests, rowNames, settleRequests, typeSearch } from '@/test/transferListHelpers';
+import { settleRequests, spyOnAnnouncements } from '@/test/homeHelpers';
+import { listRequests, rowNames, typeSearch } from '@/test/transferListHelpers';
 import {
   answerListWith,
   holdNextList,
@@ -28,13 +29,6 @@ let appState: AppStateCapture;
 beforeEach(() => {
   appState = captureAppState();
 });
-
-type Node = ReturnType<typeof screen.getByText>;
-
-// Posición del nodo en el recorrido del árbol, que es el orden en que se ve.
-function treeIndex(node: Node) {
-  return screen.container.queryAll(() => true).indexOf(node);
-}
 
 // Con «mes» y 2.000,00–4.000,00 aplicados, una recarga trae `[]` y después otra falla sin red.
 async function failRefreshOnEmpty() {

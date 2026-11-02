@@ -5,19 +5,15 @@ import { dismissPicker } from '@/test/datePickerMock';
 
 import { transferItem, transferListOf, transfersOk } from '@/test/apiFixtures';
 import { captureAppState, type AppStateCapture } from '@/test/appStateMock';
-import { focusedFieldLabels, watchFocus } from '@/test/focus';
+import { focusedFieldLabels, spyOnReaderFocus, watchFocus } from '@/test/focus';
+import { settleRequests } from '@/test/homeHelpers';
+import { listRequests, openSheet, rowNames, rowOf, sheetModal, showSheet, typeSearch } from '@/test/transferListHelpers';
 import {
-  listRequests,
-  openSheet,
-  rowNames,
-  rowOf,
-  settleRequests,
-  sheetModal,
-  showSheet,
-  spyOnReaderFocus,
-  typeSearch,
-} from '@/test/transferListHelpers';
-import { holdNextList, returnFromBackground, visitNewTransferAndBack } from '@/test/transferListRefreshHelpers';
+  holdNextList,
+  REAL_NAMES,
+  returnFromBackground,
+  visitNewTransferAndBack,
+} from '@/test/transferListRefreshHelpers';
 import {
   amountSheetTitle,
   chooseBound,
@@ -31,8 +27,6 @@ jest.mock('@/components/useDatePicker', () =>
 );
 
 afterEach(jest.restoreAllMocks);
-
-const REAL_NAMES = ['Ronaldo de Assis Moreira', 'Lionel Andres Messi', 'Federico Valverde'];
 
 const otherTransfers = transferListOf([
   transferItem({ name: 'Neymar da Silva Santos', document: '14049940400', date: '2024-09-01' }),

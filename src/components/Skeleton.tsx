@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Animated, type DimensionValue, Easing, StyleSheet, View } from 'react-native';
 
+import { hiddenFromReader } from '@/components/hiddenFromReader';
 import { useReducedMotionSetting } from '@/components/useReducedMotion';
 import { colors, motion, radii } from '@/theme';
 
@@ -31,12 +32,6 @@ function usePulse(from: number, to: number) {
 
   return value;
 }
-
-const hiddenFromReader = {
-  accessible: false,
-  accessibilityElementsHidden: true,
-  importantForAccessibility: 'no-hide-descendants',
-} as const;
 
 // Bloque decorativo de carga; el grupo que lo contiene es quien se anuncia.
 export function Skeleton({ tone, ...shape }: SkeletonProps) {

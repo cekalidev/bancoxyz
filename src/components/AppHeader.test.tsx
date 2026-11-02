@@ -1,8 +1,9 @@
-import { render, screen, userEvent } from '@testing-library/react-native';
+import { isHiddenFromAccessibility, render, screen, userEvent } from '@testing-library/react-native';
 import { StyleSheet, Text } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AppHeader } from '@/components/AppHeader';
+import { accessibleOrder } from '@/test/a11yTree';
 import { colors, layout, spacing, typography } from '@/theme';
 
 const metrics = {
@@ -11,20 +12,21 @@ const metrics = {
 };
 
 const LOGO_SIZE = 40;
+const HIDDEN = { includeHiddenElements: true };
 
 describe('AppHeader', () => {
   it('muestra el logo de 40 sin teñir con etiqueta BancoXYZ y el título en una barra de 56', async () => {
     await render(<AppHeader />);
 
     const logo = screen.getByLabelText('BancoXYZ');
-    const title = screen.getByText('BancoXYZ');
+    const title = screen.getByText('BancoXYZ', HIDDEN);
 
     expect(logo).toHaveStyle({ width: LOGO_SIZE, height: LOGO_SIZE });
     expect(StyleSheet.flatten(logo.props.style)).not.toHaveProperty('tintColor');
     expect(logo.props).not.toHaveProperty('tintColor');
     expect(title).toHaveStyle({ ...typography.h2, color: colors.text });
     expect(title.parent).toHaveStyle({
-      height: layout.appBarHeight,
+      minHeight: layout.appBarHeight,
       flexDirection: 'row',
       alignItems: 'center',
       gap: spacing.sm,
@@ -40,9 +42,9 @@ describe('AppHeader', () => {
       </SafeAreaProvider>,
     );
 
-    const row = screen.getByText('BancoXYZ').parent;
+    const row = screen.getByText('BancoXYZ', HIDDEN).parent;
 
-    expect(row).toHaveStyle({ height: layout.appBarHeight });
+    expect(row).toHaveStyle({ minHeight: layout.appBarHeight });
     expect(row?.parent).toHaveStyle({
       backgroundColor: colors.background,
       paddingTop: metrics.insets.top,
@@ -50,11 +52,29 @@ describe('AppHeader', () => {
   });
 });
 
+describe('AppHeader alto de la barra', () => {
+  it('la barra mide al menos 56 y crece con el texto, sin alto fijo', async () => {
+    const { unmount } = await render(<AppHeader />);
+    const brandBar = screen.getByText('BancoXYZ', HIDDEN).parent;
+
+    expect(layout.appBarHeight).toBe(56);
+    expect(brandBar).toHaveStyle({ minHeight: layout.appBarHeight });
+    expect(StyleSheet.flatten(brandBar?.props.style)).not.toHaveProperty('height');
+    await unmount();
+
+    await render(<AppHeader title="Nueva transferencia" onBack={jest.fn()} />);
+    const backBar = screen.getByText('Nueva transferencia').parent;
+
+    expect(backBar).toHaveStyle({ minHeight: layout.appBarHeight });
+    expect(StyleSheet.flatten(backBar?.props.style)).not.toHaveProperty('height');
+  });
+});
+
 describe('AppHeader acción derecha', () => {
   it('muestra la acción derecha cuando se le pasa', async () => {
     await render(<AppHeader right={<Text>Acción derecha</Text>} />);
 
-    const title = screen.getByText('BancoXYZ');
+    const title = screen.getByText('BancoXYZ', HIDDEN);
     const bar = title.parent;
 
     expect(bar?.children).toHaveLength(3);
@@ -64,15 +84,30 @@ describe('AppHeader acción derecha', () => {
 });
 
 describe('AppHeader accesibilidad', () => {
-  it('anuncia el título como encabezado', async () => {
+  it('con el título BancoXYZ el logo se anuncia una vez como imagen y el título queda oculto a los lectores', async () => {
     await render(<AppHeader />);
 
-    expect(screen.getByRole('header', { name: 'BancoXYZ' })).toBe(screen.getByText('BancoXYZ'));
+    const logo = screen.getByRole('image', { name: 'BancoXYZ' });
+    const title = screen.getByText('BancoXYZ', HIDDEN);
+
+    expect(accessibleOrder()).toEqual(['BancoXYZ']);
+    expect(logo.props.accessible).toBe(true);
+    expect(title.props.accessibilityElementsHidden).toBe(true);
+    expect(title.props.importantForAccessibility).toBe('no-hide-descendants');
+    expect(isHiddenFromAccessibility(title)).toBe(true);
+    expect(screen.queryByRole('header')).toBeNull();
+  });
+
+  it('con otro título y sin volver el logo se anuncia y el título es un encabezado', async () => {
+    await render(<AppHeader title="Mis datos" />);
+
+    expect(accessibleOrder()).toEqual(['BancoXYZ', 'Mis datos']);
+    expect(screen.getByLabelText('BancoXYZ').props.accessible).toBe(true);
+    expect(screen.getByRole('header', { name: 'Mis datos' })).toBe(screen.getByText('Mis datos'));
   });
 });
 
 const BACK_TITLE = 'Nueva transferencia';
-const HIDDEN = { includeHiddenElements: true };
 
 const renderWithBack = (onBack = jest.fn()) => render(<AppHeader title={BACK_TITLE} onBack={onBack} />);
 

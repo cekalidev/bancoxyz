@@ -7,7 +7,7 @@ import { ERROR_MESSAGES } from '@/services/api/errors';
 import { getTransfers } from '@/services/api/transfers';
 import type { Session } from '@/services/api/types';
 import { balanceBody, loginOk, sessionUnauthorized } from '@/test/apiFixtures';
-import { mockFetchPendingEach, type PendingEachFetch } from '@/test/fetchMock';
+import { mockFetchPendingEach, type PendingEachFetch } from '@/test/fetchPending';
 import { balanceRequests, spyOnAnnouncements } from '@/test/homeHelpers';
 import { prepareAppTest, renderApp, seedSession } from '@/test/sessionHelpers';
 

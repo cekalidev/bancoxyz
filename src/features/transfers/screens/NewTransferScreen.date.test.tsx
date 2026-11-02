@@ -1,7 +1,9 @@
 import { fireEvent, screen } from 'expo-router/testing-library';
 
+import { treeIndex } from '@/test/a11yTree';
 import { dismissPicker, lastPickerRequest } from '@/test/datePickerMock';
-import { settleRequests, spyOnFocusEvents } from '@/test/homeHelpers';
+import { spyOnFocusEvents } from '@/test/focus';
+import { settleRequests } from '@/test/homeHelpers';
 import {
   chooseDate,
   fillValidForm,
@@ -30,11 +32,6 @@ const BEFORE_TODAY = 'La fecha no puede ser anterior a hoy.';
 const BEYOND_YEAR = 'Elige una fecha dentro del próximo año.';
 
 afterEach(jest.restoreAllMocks);
-
-// Posición del nodo en el recorrido del árbol, que es el orden visual.
-function treeIndex(node: ReturnType<typeof screen.getByText>) {
-  return screen.container.queryAll(() => true).indexOf(node);
-}
 
 function expectErrorUnderDate(message: string) {
   const error = screen.getByText(message);

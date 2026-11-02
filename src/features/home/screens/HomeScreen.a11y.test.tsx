@@ -4,11 +4,10 @@ import { Animated, StyleSheet } from 'react-native';
 import { inspect } from 'util';
 
 import { ERROR_MESSAGES } from '@/services/api/errors';
-import { accessibleOrder, exposedStrings } from '@/test/a11yTree';
+import { accessibleOrder, exposedStrings, treeIndex } from '@/test/a11yTree';
 import { balanceBody, sessionUnauthorized, transferListWrapped } from '@/test/apiFixtures';
-import { defer } from '@/test/defer';
 import { mockApiRoutes, reply, type Reply } from '@/test/fetchMock';
-import { balanceResponse, homeSession, renderHome, settleRequests } from '@/test/homeHelpers';
+import { balanceResponse, holdFirstLoad, homeSession, renderHome, settleRequests } from '@/test/homeHelpers';
 import { mockReducedMotion } from '@/test/reducedMotion';
 
 const GREETING = 'Hola, Gabriel Topaz';
@@ -28,11 +27,6 @@ async function failRefreshOnReturn(balance: Reply) {
   mockApiRoutes({ balance, transferList: reply(200, transferListWrapped) });
   await act(async () => router.back());
   await settleRequests();
-}
-
-// Posición del nodo en el recorrido del árbol, que es el orden de lectura.
-function treeIndex(text: string) {
-  return screen.container.queryAll(() => true).indexOf(screen.getByText(text));
 }
 
 function expectActionButtons() {
@@ -67,8 +61,8 @@ describe('HomeScreen: orden de lectura', () => {
     await failRefreshOnReturn('networkError');
     expect(accessibleOrder()).toEqual([GREETING, 'Reintentar', CARD, 'Ocultar saldo', ...ACTIONS]);
     // El texto del aviso no tiene rol ni es un elemento accesible propio, así que se comprueba por posición.
-    expect(treeIndex(NETWORK)).toBeGreaterThan(treeIndex(GREETING));
-    expect(treeIndex(NETWORK)).toBeLessThan(treeIndex(AMOUNT));
+    expect(treeIndex(screen.getByText(NETWORK))).toBeGreaterThan(treeIndex(screen.getByText(GREETING)));
+    expect(treeIndex(screen.getByText(NETWORK))).toBeLessThan(treeIndex(screen.getByText(AMOUNT)));
   });
 
   it('con el aviso de primera carga el orden es saludo, aviso y los dos botones', async () => {
@@ -77,8 +71,8 @@ describe('HomeScreen: orden de lectura', () => {
 
     expect(accessibleOrder()).toEqual([GREETING, 'Reintentar', ...ACTIONS]);
     // El texto del aviso no tiene rol, así que su lugar tras el saludo se comprueba por posición.
-    expect(treeIndex(NETWORK)).toBeGreaterThan(treeIndex(GREETING));
-    expect(treeIndex(NETWORK)).toBeLessThan(treeIndex('Reintentar'));
+    expect(treeIndex(screen.getByText(NETWORK))).toBeGreaterThan(treeIndex(screen.getByText(GREETING)));
+    expect(treeIndex(screen.getByText(NETWORK))).toBeLessThan(treeIndex(screen.getByText('Reintentar')));
   });
 });
 
@@ -111,13 +105,6 @@ describe('HomeScreen: reducción de movimiento', () => {
     expect(screen.getByText(AMOUNT)).toBeOnTheScreen();
   });
 });
-
-// Retiene la respuesta de la primera carga: la implementación de una sola vez gana a la que pone `renderHome`.
-function holdFirstLoad() {
-  const firstLoad = defer<Response>();
-  jest.spyOn(global, 'fetch').mockImplementationOnce(() => firstLoad.promise);
-  return firstLoad;
-}
 
 const CONSOLE_METHODS = ['log', 'info', 'warn', 'error', 'debug'] as const;
 const AMOUNT_TRACES = /1800|1\.800|2500|2\.500/;

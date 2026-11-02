@@ -25,4 +25,6 @@ export const layout = {
   headerLogoSize: 40,
   resultIconSize: 48,
   listItemMinHeight: 72,
+  chipSkeletonWidth: 88,
+  sheetMaxHeight: '90%',
 } as const;

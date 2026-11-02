@@ -1,6 +1,6 @@
 import { render, screen, userEvent } from '@testing-library/react-native';
 
-import { mockFetchPending } from '@/test/fetchMock';
+import { mockFetchPending } from '@/test/fetchPending';
 import { focusedFieldLabels, watchFocus } from '@/test/focus';
 import { prepareSessionTest } from '@/test/sessionHelpers';
 

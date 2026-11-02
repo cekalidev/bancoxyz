@@ -1,13 +1,11 @@
-import { render } from '@testing-library/react-native';
 import { fireEvent, screen } from 'expo-router/testing-library';
 
-import { AlertIcon } from '@/components/icons/AlertIcon';
 import { finishAttempt } from '@/features/transfers/transferActions';
 import { reply } from '@/test/fetchMock';
 import { politeRegionWith, settleRequests, spyOnAnnouncements } from '@/test/homeHelpers';
-import { accessibleOrder } from '@/test/a11yTree';
+import { accessibleOrder, expectInTreeOrder } from '@/test/a11yTree';
+import { alertIconPaths, pathsOf } from '@/test/iconPaths';
 import { goToConfirm, renderTransferFlow } from '@/test/transferHelpers';
-import { colors } from '@/theme';
 
 jest.mock('@/components/useDatePicker', () =>
   jest.requireActual<typeof import('@/test/datePickerMock')>('@/test/datePickerMock').datePickerMockFactory(),
@@ -20,19 +18,6 @@ const SPOKEN_SUMMARY = 'Vas a transferir 1.250,00 dólares al CPF 123.456.789-00
 const REJECTED = 'No pudimos hacer la transferencia. Revisa los datos e inténtalo de nuevo.';
 
 afterEach(jest.restoreAllMocks);
-
-type Node = ReturnType<typeof screen.getByText>;
-
-function pathsOf(node: Node) {
-  return node.queryAll((child) => typeof child.props.d === 'string').map((child) => String(child.props.d));
-}
-
-async function alertIconPaths() {
-  const { root, unmount } = await render(<AlertIcon color={colors.error} />);
-  const paths = root ? pathsOf(root) : [];
-  await unmount();
-  return paths;
-}
 
 // Llega a la confirmación de 1.250,00 USD al CPF de prueba para hoy, igual a un envío
 // con éxito de hace 2 min, y la envía otra vez: la API la rechaza con un 400.
@@ -53,17 +38,6 @@ async function confirmWithBothNotices() {
 function confirmReadingOrder() {
   const order = accessibleOrder();
   return order.slice(order.lastIndexOf('Volver'));
-}
-
-// Posición del nodo en el recorrido del árbol, que es el orden visual.
-function treeIndex(node: Node) {
-  return screen.container.queryAll(() => true).indexOf(node);
-}
-
-function expectInTreeOrder(nodes: Node[]) {
-  const positions = nodes.map(treeIndex);
-  expect(positions).toEqual([...positions].sort((a, b) => a - b));
-  expect(new Set(positions).size).toBe(nodes.length);
 }
 
 // «Volver» de la confirmación: el del formulario de debajo va antes en el árbol.

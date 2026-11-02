@@ -11,13 +11,12 @@ import { processColor, type TextInstance } from 'react-native';
 import { EmptyState } from '@/components/EmptyState';
 import { ListIcon } from '@/components/icons/ListIcon';
 import { SearchIcon } from '@/components/icons/SearchIcon';
+import { pathsOfIcon } from '@/test/iconPaths';
 import { colors, layout, spacing, typography } from '@/theme';
 
 const TITLE = 'Sin resultados para estos filtros';
 const TEXT = 'Prueba con otro nombre, valor o fecha';
 const LABEL = 'Limpiar filtros';
-
-type IconComponent = typeof SearchIcon;
 
 function emptyState(props: Partial<ComponentProps<typeof EmptyState>> = {}) {
   return <EmptyState Icon={SearchIcon} title={TITLE} text={TEXT} {...props} />;
@@ -32,14 +31,6 @@ function pathsIn(nodes: ReturnType<typeof iconNodes>) {
   return nodes.flatMap((node) =>
     node.queryAll((child) => typeof child.props.d === 'string').map((child) => child.props.d),
   );
-}
-
-async function pathsOfIcon(Icon: IconComponent) {
-  const { unmount } = await render(<Icon color={colors.text} size={layout.resultIconSize} />);
-  const paths = pathsIn(iconNodes());
-
-  await unmount();
-  return paths;
 }
 
 function expectDecorativeIcon(expectedPaths: string[]) {
@@ -109,8 +100,8 @@ function isNodeWithProps(node: unknown): node is NodeWithProps {
 }
 
 it('muestra el icono decorativo, el encabezado, el texto y su acción', async () => {
-  const listPaths = await pathsOfIcon(ListIcon);
-  const searchPaths = await pathsOfIcon(SearchIcon);
+  const listPaths = await pathsOfIcon(ListIcon, colors.text);
+  const searchPaths = await pathsOfIcon(SearchIcon, colors.text);
   const onPrimary = jest.fn();
   const onSecondary = jest.fn();
 

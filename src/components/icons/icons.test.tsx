@@ -113,3 +113,13 @@ describe('iconos', () => {
     ).toEqual(icons.map(([name]) => ({ name, colored: true })));
   });
 });
+
+describe('iconos ocultos en ambas plataformas', () => {
+  it.each(icons)('%s queda oculto a los lectores de pantalla en Android y en iOS', async (_name, Icon) => {
+    const { root } = await render(<Icon color={colors.error} />);
+
+    expect(root?.props.accessible).toBe(false);
+    expect(root?.props.accessibilityElementsHidden).toBe(true);
+    expect(root?.props.importantForAccessibility).toBe('no-hide-descendants');
+  });
+});

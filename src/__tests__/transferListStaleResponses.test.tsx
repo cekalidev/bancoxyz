@@ -12,9 +12,10 @@ import {
   transferListOf,
   transferListWrapped,
 } from '@/test/apiFixtures';
-import { mockFetchPendingEach, type PendingEachFetch } from '@/test/fetchMock';
+import { mockFetchPendingEach, type PendingEachFetch } from '@/test/fetchPending';
 import { prepareSessionTest, renderApp, seedSession } from '@/test/sessionHelpers';
 import { LIST_NOW, listRequests, listSession, rowNames } from '@/test/transferListHelpers';
+import { pressButton } from '@/test/transferSessionHelpers';
 
 jest.mock('expo-font', () => ({ useFonts: jest.fn(() => [true, null]) }));
 jest.mock('@/components/useDatePicker', () =>
@@ -28,8 +29,6 @@ const EXPIRED = ERROR_MESSAGES.unauthorized;
 const ALL_NAMES = ['Ronaldo de Assis Moreira', 'Lionel Andres Messi', 'Federico Valverde'];
 // Respuesta de una petición antigua: con ella se ve si algo suyo llega a la pantalla.
 const STALE_LIST = transferListOf([transferItem({ name: 'Persona Anterior', document: '99999999999', value: 777 })]);
-
-const pressButton = (name: string) => fireEvent.press(screen.getByRole('button', { name }));
 
 let pending: PendingEachFetch;
 

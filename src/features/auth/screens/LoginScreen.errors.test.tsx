@@ -4,12 +4,8 @@ import { AccessibilityInfo, Platform } from 'react-native';
 import { ERROR_MESSAGES } from '@/services/api/errors';
 import { REQUEST_TIMEOUT_MS } from '@/services/api/withTimeout';
 import { loginUnauthorized } from '@/test/apiFixtures';
-import {
-  mockFetchNetworkError,
-  mockFetchPending,
-  mockFetchPendingEach,
-  mockFetchResponse,
-} from '@/test/fetchMock';
+import { mockFetchNetworkError, mockFetchResponse } from '@/test/fetchMock';
+import { mockFetchPending, mockFetchPendingEach } from '@/test/fetchPending';
 import { focusedFieldLabels, watchFocus } from '@/test/focus';
 import { prepareSessionTest } from '@/test/sessionHelpers';
 

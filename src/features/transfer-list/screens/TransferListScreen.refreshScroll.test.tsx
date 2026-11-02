@@ -5,9 +5,10 @@ import { ERROR_MESSAGES } from '@/services/api/errors';
 import { transferListOf, transfersOk } from '@/test/apiFixtures';
 import { captureAppState, type AppStateCapture } from '@/test/appStateMock';
 import { reply } from '@/test/fetchMock';
-import { focusedFieldLabels, watchFocus } from '@/test/focus';
+import { focusedFieldLabels, spyOnReaderFocus, watchFocus } from '@/test/focus';
 import { mockReducedMotion } from '@/test/reducedMotion';
-import { rowOf, settleRequests, spyOnReaderFocus } from '@/test/transferListHelpers';
+import { settleRequests } from '@/test/homeHelpers';
+import { rowOf } from '@/test/transferListHelpers';
 import { answerListWith, returnFromBackground, settleFailure } from '@/test/transferListRefreshHelpers';
 import { renderLoadedList } from '@/test/transferListSheetHelpers';
 

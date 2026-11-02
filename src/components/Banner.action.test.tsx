@@ -1,11 +1,11 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
 
 import { Banner } from '@/components/Banner';
+import { querySpinners } from '@/test/spinners';
 import { colors, spacing } from '@/theme';
 
 const MESSAGE = 'No hay conexión. Revisa tu internet e inténtalo de nuevo.';
 const LABEL = 'Reintentar';
-const SPINNER_TYPES = ['RCTActivityIndicatorView', 'AndroidProgressBar', 'ActivityIndicator'];
 
 type Align = 'center' | 'end';
 type Node = ReturnType<typeof screen.getByText>;
@@ -28,15 +28,6 @@ function isInside(node: Node, ancestor: Node) {
     current = current.parent;
   }
   return false;
-}
-
-function querySpinners() {
-  return screen.container.queryAll(
-    (node) =>
-      node.props.accessibilityRole === 'progressbar' ||
-      node.props.role === 'progressbar' ||
-      SPINNER_TYPES.includes(String(node.type)),
-  );
 }
 
 function bannerWith(align: Align, { busy = false, onPress = jest.fn(), message = MESSAGE as string | null } = {}) {
@@ -73,7 +64,7 @@ describe('Banner con acción', () => {
 
     expect(button).toBeDisabled();
     expect(button).toBeBusy();
-    expect(querySpinners()).toHaveLength(0);
+    expect(querySpinners({ withProgressRole: true })).toHaveLength(0);
     expect(screen.getByText(MESSAGE)).toBeOnTheScreen();
 
     await fireEvent.press(button);

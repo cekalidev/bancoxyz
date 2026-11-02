@@ -1,5 +1,6 @@
 import Svg, { Path, Rect } from 'react-native-svg';
 
+import { hiddenFromReader } from '@/components/hiddenFromReader';
 import { borders, layout } from '@/theme';
 
 type CalendarIconProps = { color: string; size?: number };
@@ -15,8 +16,7 @@ export function CalendarIcon({ color, size = layout.iconSize }: CalendarIconProp
       strokeWidth={borders.strong}
       strokeLinecap="round"
       strokeLinejoin="round"
-      accessible={false}
-      importantForAccessibility="no-hide-descendants"
+      {...hiddenFromReader}
     >
       <Rect x={3} y={5} width={18} height={16} rx={2} />
       <Path d="M3 10H21" />

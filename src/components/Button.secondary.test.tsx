@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 
 import { Button } from '@/components/Button';
 import { mockReducedMotion } from '@/test/reducedMotion';
-import { colors, motion, radii, spacing, typography } from '@/theme';
+import { colors, layout, motion, radii, spacing, typography } from '@/theme';
 
 const LABEL = 'Ver transferencias';
 const SECONDARY_HEIGHT = 52;
@@ -42,12 +42,6 @@ describe('Button secondary', () => {
     expect(within(button).queryByTestId('button-gradient')).not.toBeOnTheScreen();
   });
 
-  it('el secundario mide 52 de alto', async () => {
-    const button = await renderSecondary();
-
-    expect(button).toHaveStyle({ height: SECONDARY_HEIGHT });
-  });
-
   it('el secundario no se encoge con reducción de movimiento', async () => {
     mockReducedMotion(true);
     const button = await renderSecondary();
@@ -56,5 +50,23 @@ describe('Button secondary', () => {
 
     expect(button).toHaveStyle({ opacity: motion.pressedOpacity });
     expect(StyleSheet.flatten(button.props.style)).not.toHaveProperty('transform');
+  });
+});
+
+describe('Button secondary alto', () => {
+  it('el secundario mide 52 de alto', async () => {
+    const button = await renderSecondary();
+
+    expect(layout.buttonHeight).toBe(SECONDARY_HEIGHT);
+    expect(button).toHaveStyle({ minHeight: SECONDARY_HEIGHT });
+    expect(StyleSheet.flatten(button.props.style)).not.toHaveProperty('height');
+  });
+
+  it('el secundario crece en alto con su texto y no tiene alto fijo', async () => {
+    const button = await renderSecondary();
+
+    expect(button).toHaveStyle({ minHeight: layout.buttonHeight, paddingVertical: spacing.sm });
+    expect(StyleSheet.flatten(button.props.style)).not.toHaveProperty('height');
+    expect(within(button).getByText(LABEL).props.numberOfLines).toBeUndefined();
   });
 });

@@ -2,8 +2,7 @@ import { userEvent } from '@testing-library/react-native';
 import { StyleSheet } from 'react-native';
 import { act, fireEvent, screen } from 'expo-router/testing-library';
 
-import { focusedFieldLabels, watchFocus } from '@/test/focus';
-import { spyOnFocusEvents } from '@/test/homeHelpers';
+import { focusedFieldLabels, spyOnFocusEvents, watchFocus } from '@/test/focus';
 import { colors } from '@/theme';
 import {
   applySheet,

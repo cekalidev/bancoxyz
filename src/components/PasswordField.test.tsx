@@ -1,17 +1,15 @@
 import { render, screen, userEvent } from '@testing-library/react-native';
-import type { ComponentType } from 'react';
 import { useState } from 'react';
 import { processColor } from 'react-native';
 
 import { EyeIcon } from '@/components/icons/EyeIcon';
 import { EyeOffIcon } from '@/components/icons/EyeOffIcon';
 import { PasswordField } from '@/components/PasswordField';
+import { pathsOf, pathsOfIcon, strokeColorsOf } from '@/test/iconPaths';
 import { colors, layout } from '@/theme';
 
 const LABEL = 'Contraseña';
 const TYPED = 'Secreta 1';
-
-type Node = ReturnType<typeof getToggle>;
 
 function Harness({ onChangeText }: { onChangeText: (text: string) => void }) {
   const [value, setValue] = useState('');
@@ -36,22 +34,6 @@ function getToggle() {
   return screen.getByRole('button');
 }
 
-function pathsOf(node: Node) {
-  return node.queryAll((child) => typeof child.props.d === 'string').map((child) => child.props.d);
-}
-
-function strokeColorsOf(node: Node) {
-  return node.queryAll((child) => child.props.stroke !== undefined).map((child) => child.props.stroke.payload);
-}
-
-async function pathsOfIcon(Icon: ComponentType<{ color: string }>) {
-  const { root, unmount } = await render(<Icon color={colors.textSecondary} />);
-  const paths = root ? pathsOf(root) : [];
-
-  await unmount();
-  return paths;
-}
-
 function expectToggleSized() {
   expect(getToggle()).toHaveStyle({ width: layout.minTouch, height: layout.minTouch });
 }
@@ -66,8 +48,8 @@ function expectState(hidden: boolean, label: string, iconPaths: string[]) {
 
 describe('PasswordField', () => {
   it('alterna mostrar y ocultar la contraseña con su etiqueta sin perder el texto', async () => {
-    const eyePaths = await pathsOfIcon(EyeIcon);
-    const eyeOffPaths = await pathsOfIcon(EyeOffIcon);
+    const eyePaths = await pathsOfIcon(EyeIcon, colors.textSecondary);
+    const eyeOffPaths = await pathsOfIcon(EyeOffIcon, colors.textSecondary);
     const onChangeText = jest.fn();
     const user = userEvent.setup();
 

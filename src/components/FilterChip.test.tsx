@@ -6,6 +6,7 @@ import type { PressableInstance } from 'react-native';
 import { FilterChip } from '@/components/FilterChip';
 import { CheckIcon } from '@/components/icons/CheckIcon';
 import { ChevronDownIcon } from '@/components/icons/ChevronDownIcon';
+import { pathsOf, pathsOfIcon, strokeColorsOf } from '@/test/iconPaths';
 import { colors, fonts, gradients, layout, radii, spacing, typography } from '@/theme';
 
 const IDLE_TEXT = 'Valor';
@@ -23,22 +24,6 @@ function getChip() {
   }
 
   return chip;
-}
-
-function pathsOf(node: Node) {
-  return node.queryAll((child) => typeof child.props.d === 'string').map((child) => child.props.d);
-}
-
-function strokeColorsOf(node: Node) {
-  return node.queryAll((child) => child.props.stroke !== undefined).map((child) => child.props.stroke.payload);
-}
-
-async function pathsOfIcon(Icon: typeof CheckIcon) {
-  const { root, unmount } = await render(<Icon color={colors.text} />);
-  const paths = root ? pathsOf(root) : [];
-
-  await unmount();
-  return paths;
 }
 
 function expectPillShape(chip: Node) {
@@ -64,8 +49,8 @@ function expectAccentGradient(chip: Node) {
 
 describe('FilterChip sin aplicar', () => {
   it('sin aplicar muestra la flecha y no está seleccionado', async () => {
-    const chevronPaths = await pathsOfIcon(ChevronDownIcon);
-    const checkPaths = await pathsOfIcon(CheckIcon);
+    const chevronPaths = await pathsOfIcon(ChevronDownIcon, colors.text);
+    const checkPaths = await pathsOfIcon(CheckIcon, colors.text);
     const onPress = jest.fn();
     const chipRef = createRef<PressableInstance>();
     const user = userEvent.setup();
@@ -96,8 +81,8 @@ describe('FilterChip sin aplicar', () => {
 
 describe('FilterChip aplicado', () => {
   it('aplicado muestra ✓, su resumen, está seleccionado y tiene el degradado', async () => {
-    const chevronPaths = await pathsOfIcon(ChevronDownIcon);
-    const checkPaths = await pathsOfIcon(CheckIcon);
+    const chevronPaths = await pathsOfIcon(ChevronDownIcon, colors.text);
+    const checkPaths = await pathsOfIcon(CheckIcon, colors.text);
     const onPress = jest.fn();
     const user = userEvent.setup();
 

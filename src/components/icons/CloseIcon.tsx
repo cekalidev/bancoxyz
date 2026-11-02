@@ -1,5 +1,6 @@
 import Svg, { Path } from 'react-native-svg';
 
+import { hiddenFromReader } from '@/components/hiddenFromReader';
 import { borders, layout } from '@/theme';
 
 type CloseIconProps = { color: string; size?: number };
@@ -15,8 +16,7 @@ export function CloseIcon({ color, size = layout.iconSize }: CloseIconProps) {
       strokeWidth={borders.strong}
       strokeLinecap="round"
       strokeLinejoin="round"
-      accessible={false}
-      importantForAccessibility="no-hide-descendants"
+      {...hiddenFromReader}
     >
       <Path d="M6 6L18 18" />
       <Path d="M18 6L6 18" />

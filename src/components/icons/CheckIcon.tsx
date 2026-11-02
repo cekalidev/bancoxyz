@@ -1,5 +1,6 @@
 import Svg, { Path } from 'react-native-svg';
 
+import { hiddenFromReader } from '@/components/hiddenFromReader';
 import { borders, layout } from '@/theme';
 
 type CheckIconProps = { color: string; size?: number };
@@ -15,8 +16,7 @@ export function CheckIcon({ color, size = layout.iconSize }: CheckIconProps) {
       strokeWidth={borders.strong}
       strokeLinecap="round"
       strokeLinejoin="round"
-      accessible={false}
-      importantForAccessibility="no-hide-descendants"
+      {...hiddenFromReader}
     >
       <Path d="M6 12.5L10.5 17L18 7.5" />
     </Svg>

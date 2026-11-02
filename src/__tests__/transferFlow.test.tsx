@@ -7,6 +7,7 @@ import { mockApiRoutes, reply, type Reply } from '@/test/fetchMock';
 import { balanceRequests, balanceResponse, holdNextResponse, settleRequests } from '@/test/homeHelpers';
 import { prepareSessionTest, renderApp, seedSession } from '@/test/sessionHelpers';
 import { chooseDate, fillValidForm, goToConfirm, letPickerClose, TRANSFER_NOW } from '@/test/transferHelpers';
+import { pressButton } from '@/test/transferSessionHelpers';
 import type { CalendarDate } from '@/utils/date';
 
 jest.mock('expo-font', () => ({ useFonts: jest.fn(() => [true, null]) }));
@@ -14,8 +15,6 @@ jest.mock('expo-font', () => ({ useFonts: jest.fn(() => [true, null]) }));
 jest.mock('@/components/useDatePicker', () =>
   jest.requireActual<typeof import('@/test/datePickerMock')>('@/test/datePickerMock').datePickerMockFactory(),
 );
-
-const pressButton = (name: string) => fireEvent.press(screen.getByRole('button', { name }));
 
 beforeEach(() => {
   prepareSessionTest();

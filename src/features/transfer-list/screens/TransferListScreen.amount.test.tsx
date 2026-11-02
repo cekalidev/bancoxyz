@@ -1,5 +1,6 @@
 import { act, fireEvent, screen } from 'expo-router/testing-library';
 
+import { spyOnReaderFocus } from '@/test/focus';
 import {
   applySheet,
   listRequests,
@@ -7,7 +8,6 @@ import {
   renderTransferList,
   rowNames,
   showSheet,
-  spyOnReaderFocus,
   typeBound,
   typeSearch,
 } from '@/test/transferListHelpers';

@@ -1,8 +1,9 @@
-import { act, fireEvent, screen, within } from 'expo-router/testing-library';
-import { DeviceEventEmitter, Platform, StyleSheet } from 'react-native';
+import { fireEvent, screen, within } from 'expo-router/testing-library';
+import { Platform } from 'react-native';
 
 import { readingOrder } from '@/test/a11yTree';
 import { pickDate } from '@/test/datePickerMock';
+import { KEYBOARD, openKeyboardOver } from '@/test/keyboard';
 import { RANGE_ERROR, type Scenario } from '@/test/transferListA11yHelpers';
 import { applySheet, openSheet, sheetModal, showSheet } from '@/test/transferListHelpers';
 import {
@@ -136,25 +137,12 @@ describe('TransferListScreen: orden de lectura de las hojas', () => {
   });
 });
 
-// Pantalla de 800 de alto con el teclado desde el punto 500: tapa 300 por abajo.
-const SHEET_FRAME = { x: 0, y: 0, width: 360, height: 800 };
-const KEYBOARD = { screenX: 0, screenY: 500, width: 360, height: 300 };
-
 // El scroll interno de la hoja abierta: el que contiene «Aplicar».
 function sheetScrollView() {
   const scrolls = sheetModal()?.queryAll((node) => node.type === 'RCTScrollView') ?? [];
   const sheet = scrolls.find((node) => within(node).queryByRole('button', { name: 'Aplicar' }) !== null);
   if (!sheet) throw new Error('No hay scroll con el contenido de la hoja');
   return sheet;
-}
-
-// Coloca el contenedor que esquiva el teclado y abre el teclado de iOS; devuelve el hueco que deja abajo.
-async function openKeyboardOver(avoiding: ReturnType<typeof sheetScrollView>) {
-  await fireEvent(avoiding, 'layout', { persist: () => undefined, nativeEvent: { layout: SHEET_FRAME } });
-  await act(async () => {
-    DeviceEventEmitter.emit('keyboardWillShow', { endCoordinates: KEYBOARD, duration: 0, easing: 'keyboard' });
-  });
-  return StyleSheet.flatten(avoiding.props.style).paddingBottom;
 }
 
 describe('TransferListScreen: hojas con letra grande y teclado', () => {

@@ -4,13 +4,14 @@ import { act, fireEvent, screen } from 'expo-router/testing-library';
 import { transferItem, transferListEmpty, transferListOf, transfersOk } from '@/test/apiFixtures';
 import { captureAppState, type AppStateCapture } from '@/test/appStateMock';
 import { reply } from '@/test/fetchMock';
-import { openSheet, rowNames, settleRequests, showSheet, spyOnReaderFocus, typeSearch } from '@/test/transferListHelpers';
+import { spyOnReaderFocus } from '@/test/focus';
+import { settleRequests } from '@/test/homeHelpers';
+import { openSheet, rowNames, showSheet } from '@/test/transferListHelpers';
 import { answerListWith, returnFromBackground } from '@/test/transferListRefreshHelpers';
 import {
   amountSheetTitle,
-  applyAmountRange,
   boundField,
-  renderLoadedList,
+  renderFilteredList,
   typeShownAmount,
 } from '@/test/transferListSheetHelpers';
 
@@ -29,14 +30,6 @@ let appState: AppStateCapture;
 beforeEach(() => {
   appState = captureAppState();
 });
-
-// Con «mes» y 2.000,00–4.000,00 aplicados solo se ve Messi.
-async function renderFilteredList() {
-  await renderLoadedList();
-  await typeSearch('mes');
-  await applyAmountRange('2.000,00', '4.000,00');
-  expect(screen.getByText('1 de 3 transferencias')).toBeOnTheScreen();
-}
 
 // La app vuelve del segundo plano y la recarga responde con el cuerpo dado.
 async function refreshWith(body: unknown) {

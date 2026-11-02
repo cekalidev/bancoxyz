@@ -1,21 +1,24 @@
 import { fireEvent, screen } from 'expo-router/testing-library';
 
 import { ERROR_MESSAGES } from '@/services/api/errors';
+import { treeIndex } from '@/test/a11yTree';
 import { transferListOf, transfersOk } from '@/test/apiFixtures';
 
 import { captureAppState, type AppStateCapture } from '@/test/appStateMock';
 import { reply } from '@/test/fetchMock';
-import { politeRegionWith, spyOnAnnouncements } from '@/test/homeHelpers';
-import { listRequests, renderTransferList, rowNames, settleRequests, typeSearch } from '@/test/transferListHelpers';
+import { politeRegionWith, settleRequests, spyOnAnnouncements } from '@/test/homeHelpers';
+import { iconPathsIn } from '@/test/transferListA11yHelpers';
+import { listRequests, renderTransferList, rowNames } from '@/test/transferListHelpers';
 import {
   answerListWith,
   holdNextList,
   listFailures,
+  REAL_NAMES,
   returnFromBackground,
   settleFailure,
   visitNewTransferAndBack,
 } from '@/test/transferListRefreshHelpers';
-import { applyAmountRange, renderLoadedList } from '@/test/transferListSheetHelpers';
+import { renderFilteredList, renderLoadedList } from '@/test/transferListSheetHelpers';
 
 jest.mock('@/components/useDatePicker', () =>
   jest.requireActual<typeof import('@/test/datePickerMock')>('@/test/datePickerMock').datePickerMockFactory(),
@@ -26,30 +29,11 @@ afterEach(jest.restoreAllMocks);
 const MESSI = 'Lionel Andres Messi';
 const RANGE_CHIP = 'Filtro de valor: de 2.000 a 4.000 dólares';
 
-type Node = ReturnType<typeof screen.getByText>;
-
-// Posición del nodo en el recorrido del árbol, que es el orden en que se ve.
-function treeIndex(node: Node) {
-  return screen.container.queryAll(() => true).indexOf(node);
-}
-
-function iconPathsIn(node: Node) {
-  return node.queryAll((child) => typeof child.props.d === 'string');
-}
-
 let appState: AppStateCapture;
 
 beforeEach(() => {
   appState = captureAppState();
 });
-
-// Con «mes» y 2.000,00–4.000,00 aplicados solo se ve Messi.
-async function renderFilteredList() {
-  await renderLoadedList();
-  await typeSearch('mes');
-  await applyAmountRange('2.000,00', '4.000,00');
-  expect(screen.getByText('1 de 3 transferencias')).toBeOnTheScreen();
-}
 
 describe('TransferListScreen: error en una recarga con datos', () => {
   it.each(listFailures)(
@@ -81,7 +65,6 @@ describe('TransferListScreen: error en una recarga con datos', () => {
 });
 
 const NETWORK = ERROR_MESSAGES.network;
-const REAL_NAMES = ['Ronaldo de Assis Moreira', MESSI, 'Federico Valverde'];
 
 // Una recarga falla sin red y deja el aviso encima de las filas.
 async function failRefresh() {

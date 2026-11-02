@@ -9,6 +9,7 @@ import { prepareAppTest, renderApp, seedSession } from '@/test/sessionHelpers';
 import { LIST_NOW, listRequests, listSession, rowNames, typeSearch } from '@/test/transferListHelpers';
 import { applyAmountRange } from '@/test/transferListSheetHelpers';
 import { goToConfirm } from '@/test/transferHelpers';
+import { pressButton } from '@/test/transferSessionHelpers';
 
 jest.mock('expo-font', () => ({ useFonts: jest.fn(() => [true, null]) }));
 jest.mock('@/components/useDatePicker', () =>
@@ -24,8 +25,6 @@ const SHOW = 'Mostrar saldo';
 const SEARCH = 'Nombre del destinatario';
 const EMPTY_TITLE = 'Aún no tienes transferencias';
 const ALL_NAMES = ['Ronaldo de Assis Moreira', 'Lionel Andres Messi', 'Federico Valverde'];
-
-const pressButton = (name: string) => fireEvent.press(screen.getByRole('button', { name }));
 
 // Abre la app con la sesión guardada y espera al Inicio con sus peticiones resueltas.
 async function openHome() {

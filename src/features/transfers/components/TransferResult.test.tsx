@@ -1,12 +1,14 @@
 import { isHiddenFromAccessibility, render, screen, userEvent, within } from '@testing-library/react-native';
 import type { ComponentType } from 'react';
-import { AccessibilityInfo, processColor } from 'react-native';
+import { processColor } from 'react-native';
 
 import { AlertIcon } from '@/components/icons/AlertIcon';
 import { SuccessIcon } from '@/components/icons/SuccessIcon';
 import { TransferResult } from '@/features/transfers/components/TransferResult';
 import type { FinishedOutcome, TransferAttempt } from '@/features/transfers/types';
+import { spyOnFocusedNodes } from '@/test/focus';
 import { spyOnAnnouncements } from '@/test/homeHelpers';
+import { pathsOfIcon } from '@/test/iconPaths';
 import { colors, typography } from '@/theme';
 import type { CalendarDate } from '@/utils/date';
 
@@ -99,29 +101,6 @@ function pathsIn(nodes: ReturnType<typeof iconNodes>) {
   );
 }
 
-async function pathsOfIcon(Icon: IconComponent) {
-  const { unmount } = await render(<Icon color={colors.text} size={ICON_SIZE} />);
-  const paths = pathsIn(iconNodes());
-
-  await unmount();
-  return paths;
-}
-
-type FocusedNode = { props: { accessibilityRole?: string; children?: unknown } };
-
-function isFocusedNode(node: unknown): node is FocusedNode {
-  return typeof node === 'object' && node !== null && 'props' in node;
-}
-
-// Nodos a los que se pidió mover el foco del lector de pantalla.
-function spyOnFocusedNodes() {
-  const sendEvent = jest.spyOn(AccessibilityInfo, 'sendAccessibilityEvent').mockClear();
-  return () =>
-    sendEvent.mock.calls
-      .filter(([, type]) => type === 'focus')
-      .map(([node]) => (isFocusedNode(node) ? node.props : undefined));
-}
-
 afterEach(() => {
   jest.restoreAllMocks();
 });
@@ -130,7 +109,7 @@ describe('resultado con icono y título', () => {
   it.each(CASES)(
     'cada estado lleva su icono y su título ($name)',
     async ({ attempt, title, Icon, tint }) => {
-      const expectedPaths = await pathsOfIcon(Icon);
+      const expectedPaths = await pathsOfIcon(Icon, colors.text);
       await renderResult(attempt);
 
       const heading = screen.getByRole('header', { name: title });

@@ -1,14 +1,18 @@
 import { router } from 'expo-router';
 import { act, screen } from 'expo-router/testing-library';
 
-import { API_URLS } from '@/services/api/endpoints';
 import { ERROR_MESSAGES } from '@/services/api/errors';
 import { balanceBody } from '@/test/apiFixtures';
-import { defer } from '@/test/defer';
 import { reply } from '@/test/fetchMock';
-import { balanceResponse, holdNextResponse, renderHome } from '@/test/homeHelpers';
-
-const SPINNER_TYPES = ['RCTActivityIndicatorView', 'AndroidProgressBar', 'ActivityIndicator'];
+import {
+  balanceRequests,
+  balanceResponse,
+  holdFirstLoad,
+  holdNextResponse,
+  renderHome,
+  settleRequests,
+} from '@/test/homeHelpers';
+import { querySpinners } from '@/test/spinners';
 
 const session = {
   token: 'token-de-prueba',
@@ -18,22 +22,6 @@ const session = {
 // Nombre de 80 caracteres con varias palabras: no cabe en una línea y debe verse completo.
 const LONG_NAME = `${'Ana '.repeat(19)}Anas`;
 const longSession = { ...session, user: { ...session.user, name: LONG_NAME } };
-
-function querySpinners() {
-  return screen.container.queryAll((node) => SPINNER_TYPES.includes(String(node.type)));
-}
-
-function balanceRequests() {
-  return jest.mocked(global.fetch).mock.calls.filter(([input]) => String(input) === API_URLS.balance);
-}
-
-// Deja que terminen las respuestas simuladas y las actualizaciones que provocan.
-async function settleRequests() {
-  await act(async () => {
-    await Promise.allSettled(jest.mocked(global.fetch).mock.results.map((result) => result.value));
-    await jest.advanceTimersByTimeAsync(0);
-  });
-}
 
 describe('HomeScreen: carga', () => {
   afterEach(jest.restoreAllMocks);
@@ -91,13 +79,6 @@ describe('HomeScreen: saldo recibido', () => {
 type Release = () => Promise<void>;
 
 const nothingToRelease: Release = async () => undefined;
-
-// Retiene la respuesta de la primera carga: la implementación de una sola vez gana a la que pone `renderHome`.
-function holdFirstLoad() {
-  const firstLoad = defer<Response>();
-  jest.spyOn(global, 'fetch').mockImplementationOnce(() => firstLoad.promise);
-  return firstLoad;
-}
 
 async function showLoading(): Promise<Release> {
   const firstLoad = holdFirstLoad();

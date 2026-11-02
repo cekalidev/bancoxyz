@@ -143,6 +143,8 @@ const expectedLayout = {
   headerLogoSize: 40,
   resultIconSize: 48,
   listItemMinHeight: 72,
+  chipSkeletonWidth: 88,
+  sheetMaxHeight: '90%',
 };
 
 const expectedBorders = { regular: 1, strong: 2 };

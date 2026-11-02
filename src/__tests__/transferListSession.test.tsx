@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { act, fireEvent, screen } from 'expo-router/testing-library';
+import { act, screen } from 'expo-router/testing-library';
 
 import * as sessionActions from '@/features/auth/sessionActions';
 import { ERROR_MESSAGES } from '@/services/api/errors';
@@ -19,6 +19,7 @@ import {
 } from '@/test/transferListHelpers';
 import { answerListWith, returnFromBackground, visitNewTransferAndBack } from '@/test/transferListRefreshHelpers';
 import { amountSheetTitle } from '@/test/transferListSheetHelpers';
+import { pressButton } from '@/test/transferSessionHelpers';
 
 jest.mock('expo-font', () => ({ useFonts: jest.fn(() => [true, null]) }));
 jest.mock('@/components/useDatePicker', () =>
@@ -31,8 +32,6 @@ const LIST_NOTICES = [ERROR_MESSAGES.network, ERROR_MESSAGES.unknown];
 const GREETING = `Hola, ${listSession.user.name}`;
 const COUNTER = '3 transferencias';
 const ALL_NAMES = ['Ronaldo de Assis Moreira', 'Lionel Andres Messi', 'Federico Valverde'];
-
-const pressButton = (name: string) => fireEvent.press(screen.getByRole('button', { name }));
 
 // Abre la app con la sesión guardada y entra al listado con la respuesta indicada.
 async function enterList(list: Reply) {

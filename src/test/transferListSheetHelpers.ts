@@ -4,7 +4,7 @@ import type { CalendarDate } from '@/utils/date';
 
 import { pickDate } from './datePickerMock';
 import type { Reply } from './fetchMock';
-import { applySheet, openSheet, renderTransferList, showSheet, typeBound } from './transferListHelpers';
+import { applySheet, openSheet, renderTransferList, showSheet, typeBound, typeSearch } from './transferListHelpers';
 
 export type BoundLabel = 'Desde' | 'Hasta';
 export const BOUND_LABELS: BoundLabel[] = ['Desde', 'Hasta'];
@@ -32,6 +32,14 @@ export async function renderLoadedList(list?: Reply, total = 3) {
   await renderTransferList({ list });
   const noun = total === 1 ? 'transferencia' : 'transferencias';
   expect(await screen.findByText(`${total} ${noun}`)).toBeOnTheScreen();
+}
+
+// Con «mes» y 2.000,00–4.000,00 aplicados solo se ve Messi.
+export async function renderFilteredList() {
+  await renderLoadedList();
+  await typeSearch('mes');
+  await applyAmountRange('2.000,00', '4.000,00');
+  expect(screen.getByText('1 de 3 transferencias')).toBeOnTheScreen();
 }
 
 // Escribe tecla a tecla los dígitos del importe que se quiere ver («1.000,00» → 1, 0, 0, 0, 0, 0).

@@ -2,7 +2,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react-native';
 import { Platform } from 'react-native';
 
 import { getBackdrop, getModal } from '@/components/BottomSheet.cases';
-import { spyOnReaderFocus } from '@/test/transferListHelpers';
+import { spyOnReaderFocus } from '@/test/focus';
 
 import type { DateBounds } from '../types';
 import { DateFilterSheet } from './DateFilterSheet';

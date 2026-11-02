@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { processColor, StyleSheet } from 'react-native';
 
 import { SearchIcon } from '@/components/icons/SearchIcon';
+import { strokeColorsOf } from '@/test/iconPaths';
 import { colors, spacing } from '@/theme';
 
 import { SearchField } from './SearchField';
@@ -47,10 +48,6 @@ function getFieldBox() {
 
 function pathNodesOf(node: Node) {
   return node.queryAll((child) => typeof child.props.d === 'string');
-}
-
-function strokeColorsOf(node: Node) {
-  return node.queryAll((child) => child.props.stroke !== undefined).map((child) => child.props.stroke.payload);
 }
 
 async function searchIconPaths() {

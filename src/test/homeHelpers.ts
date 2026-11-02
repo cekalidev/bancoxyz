@@ -12,8 +12,8 @@ import { API_URLS } from '@/services/api/endpoints';
 import type { Session } from '@/services/api/types';
 
 import { balanceBody, balanceOk, loginOk, transferListWrapped } from './apiFixtures';
-import { defer } from './defer';
 import { mockApiRoutes, reply, type Reply } from './fetchMock';
+import { deferFetch } from './fetchPending';
 import { resetSessionStore } from './sessionHelpers';
 
 type RenderHomeOptions = { session?: Session; balance?: Reply };
@@ -55,7 +55,7 @@ export function balanceResponse(amount: number) {
 
 // Retiene las peticiones del saldo hasta que el test suelte la respuesta; las demás URL siguen con la simulación previa.
 export function holdNextResponse() {
-  const refresh = defer<Response>();
+  const refresh = deferFetch();
   const previous = jest.mocked(global.fetch).getMockImplementation();
   jest.mocked(global.fetch).mockImplementation((input, init) => {
     if (String(input) === API_URLS.balance) return refresh.promise;
@@ -63,6 +63,14 @@ export function holdNextResponse() {
     return previous(input, init);
   });
   return refresh;
+}
+
+// Retiene la respuesta de la primera carga: la implementación de una sola vez gana a la que pone `renderHome`.
+// Si el test no la suelta, se rechaza al terminar y no deja vivo el tope de la petición.
+export function holdFirstLoad() {
+  const firstLoad = deferFetch();
+  jest.spyOn(global, 'fetch').mockImplementationOnce(() => firstLoad.promise);
+  return firstLoad;
 }
 
 export function balanceRequests() {
@@ -88,19 +96,4 @@ export function politeRegionWith(message: string) {
   return screen.container
     .queryAll((node) => node.props.accessibilityLiveRegion === 'polite')
     .find((region) => within(region).queryByText(message) !== null);
-}
-
-type Labelled = { props: { accessibilityLabel?: string } };
-
-function hasProps(node: unknown): node is Labelled {
-  return typeof node === 'object' && node !== null && 'props' in node;
-}
-
-// Etiquetas de los nodos a los que se pidió mover el foco del lector de pantalla.
-export function spyOnFocusEvents() {
-  const sendEvent = jest.spyOn(AccessibilityInfo, 'sendAccessibilityEvent').mockClear();
-  return () =>
-    sendEvent.mock.calls
-      .filter(([, type]) => type === 'focus')
-      .map(([node]) => (hasProps(node) ? node.props.accessibilityLabel : undefined));
 }

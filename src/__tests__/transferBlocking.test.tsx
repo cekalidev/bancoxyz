@@ -7,15 +7,15 @@ import { balanceOk, loginOk, sessionUnauthorized, transferOk } from '@/test/apiF
 import { mockApiRoutes, reply, type Reply } from '@/test/fetchMock';
 import { settleRequests } from '@/test/homeHelpers';
 import { prepareSessionTest, renderApp, seedSession } from '@/test/sessionHelpers';
+import { advancePastTimeout } from '@/test/timers';
 import { fillValidForm, TRANSFER_NOW, transferRequests } from '@/test/transferHelpers';
+import { pressButton } from '@/test/transferSessionHelpers';
 
 jest.mock('expo-font', () => ({ useFonts: jest.fn(() => [true, null]) }));
 
 jest.mock('@/components/useDatePicker', () =>
   jest.requireActual<typeof import('@/test/datePickerMock')>('@/test/datePickerMock').datePickerMockFactory(),
 );
-
-const pressButton = (name: string) => fireEvent.press(screen.getByRole('button', { name }));
 
 beforeEach(() => {
   prepareSessionTest();
@@ -63,7 +63,7 @@ describe('bloqueo de salida durante el envío', () => {
   it('a los 15 s sin respuesta termina en el incierto', async () => {
     await confirmWithPendingTransfer();
 
-    await act(() => jest.advanceTimersByTimeAsync(15000));
+    await act(() => advancePastTimeout());
 
     expect(screen).toHavePathname('/nueva-transferencia/resultado');
     expect(screen.getByRole('header', { name: 'No pudimos confirmar si la transferencia se realizó' })).toBeOnTheScreen();

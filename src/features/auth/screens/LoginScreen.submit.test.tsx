@@ -1,7 +1,8 @@
 import { fireEvent, render, screen, userEvent } from '@testing-library/react-native';
 
 import { API_URLS } from '@/services/api/endpoints';
-import { lastFetchCall, mockFetchPending } from '@/test/fetchMock';
+import { lastFetchCall } from '@/test/fetchMock';
+import { mockFetchPending } from '@/test/fetchPending';
 import { watchFocus } from '@/test/focus';
 import { prepareSessionTest } from '@/test/sessionHelpers';
 

@@ -4,9 +4,11 @@ import { StyleSheet } from 'react-native';
 
 import * as sessionActions from '@/features/auth/sessionActions';
 import { ERROR_MESSAGES } from '@/services/api/errors';
+import { treeIndex } from '@/test/a11yTree';
 import { sessionUnauthorized } from '@/test/apiFixtures';
 import { mockApiRoutes, reply, type Reply } from '@/test/fetchMock';
 import { politeRegionWith, renderHome, settleRequests, spyOnAnnouncements } from '@/test/homeHelpers';
+import { advancePastTimeout } from '@/test/timers';
 import { spacing } from '@/theme';
 
 const NETWORK = ERROR_MESSAGES.network;
@@ -40,7 +42,7 @@ async function failRefresh(balance: Reply) {
   expect(screen).toHavePathname('/');
   if (balance === 'pending') {
     await act(async () => {
-      await jest.advanceTimersByTimeAsync(15000);
+      await advancePastTimeout();
     });
   }
   await settleRequests();
@@ -50,11 +52,6 @@ function ancestorsOf(node: Node) {
   const ancestors: Node[] = [];
   for (let current = node.parent; current; current = current.parent) ancestors.push(current);
   return ancestors;
-}
-
-// Posición del nodo en el recorrido del árbol, que es el orden de lectura.
-function treeIndex(node: Node) {
-  return screen.container.queryAll(() => true).indexOf(node);
 }
 
 describe('HomeScreen: error en un refresco', () => {

@@ -1,5 +1,6 @@
 import { loginOk, sessionUnauthorized } from '@/test/apiFixtures';
-import { mockFetchPendingEach, mockFetchResponse } from '@/test/fetchMock';
+import { mockFetchResponse } from '@/test/fetchMock';
+import { mockFetchPendingEach } from '@/test/fetchPending';
 
 import { getBalance } from './balance';
 import { configureApi, markLoggedIn, markLoggedOut } from './client';

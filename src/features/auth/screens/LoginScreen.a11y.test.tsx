@@ -2,6 +2,7 @@ import { act, render, screen, userEvent, waitFor, within } from '@testing-librar
 import { AccessibilityInfo, Platform, StyleSheet } from 'react-native';
 
 import { ERROR_MESSAGES } from '@/services/api/errors';
+import { politeRegions } from '@/test/a11yTree';
 import { layout } from '@/theme';
 import { loginUnauthorized } from '@/test/apiFixtures';
 import { mockFetchResponse } from '@/test/fetchMock';
@@ -17,8 +18,10 @@ const PASSWORD = 'Contraseña';
 const SHOW_PASSWORD = 'Mostrar contraseña';
 const SUBMIT = 'Entrar';
 
+// Alto que garantiza el control: su mínimo si crece con el texto o, si no, su alto fijo.
 function heightOf(element: ReturnType<typeof screen.getByRole>) {
-  return StyleSheet.flatten(element.props.style).height;
+  const { minHeight, height } = StyleSheet.flatten(element.props.style);
+  return minHeight ?? height;
 }
 
 describe('LoginScreen: accesibilidad', () => {
@@ -58,10 +61,6 @@ describe('LoginScreen: accesibilidad', () => {
     expect(screen.queryByText(/google|facebook|apple/i)).toBeNull();
   });
 });
-
-function politeRegions() {
-  return screen.container.queryAll((node) => node.props.accessibilityLiveRegion === 'polite');
-}
 
 const SPACING_KEYS = ['height', 'minHeight', 'margin', 'marginTop', 'marginBottom', 'marginVertical'];
 

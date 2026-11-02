@@ -1,9 +1,8 @@
-import { render } from '@testing-library/react-native';
 import { fireEvent, screen } from 'expo-router/testing-library';
 
-import { AlertIcon } from '@/components/icons/AlertIcon';
-import { focusedFieldLabels, watchFocus } from '@/test/focus';
-import { politeRegionWith, spyOnAnnouncements, spyOnFocusEvents } from '@/test/homeHelpers';
+import { focusedFieldLabels, spyOnFocusEvents, watchFocus } from '@/test/focus';
+import { politeRegionWith, spyOnAnnouncements } from '@/test/homeHelpers';
+import { alertIconPaths, pathsOf } from '@/test/iconPaths';
 import { applySheet, openSheet, rowNames, showSheet } from '@/test/transferListHelpers';
 import {
   amountSheetTitle,
@@ -17,7 +16,6 @@ import {
   typeShownAmount,
   type BoundLabel,
 } from '@/test/transferListSheetHelpers';
-import { colors } from '@/theme';
 
 jest.mock('@/components/useDatePicker', () =>
   jest.requireActual<typeof import('@/test/datePickerMock')>('@/test/datePickerMock').datePickerMockFactory(),
@@ -30,19 +28,6 @@ const MESSI = 'Lionel Andres Messi';
 const VALVERDE = 'Federico Valverde';
 const RONALDO = 'Ronaldo de Assis Moreira';
 const RANGE_CHIP_LABEL = 'Filtro de valor: de 2.000 a 4.000 dólares';
-
-type Node = ReturnType<typeof screen.getByText>;
-
-function pathsOf(node: Node) {
-  return node.queryAll((child) => typeof child.props.d === 'string').map((child) => String(child.props.d));
-}
-
-async function alertIconPaths() {
-  const { root, unmount } = await render(<AlertIcon color={colors.error} />);
-  const paths = root ? pathsOf(root) : [];
-  await unmount();
-  return paths;
-}
 
 // Sustituye lo que muestra el campo por el importe indicado, escrito tecla a tecla.
 async function replaceBound(label: BoundLabel, shown: string) {

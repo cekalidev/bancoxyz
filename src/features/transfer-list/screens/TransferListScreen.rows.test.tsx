@@ -4,7 +4,8 @@ import { act, screen, within } from 'expo-router/testing-library';
 import { transferItem, transferListOf, transfersOk } from '@/test/apiFixtures';
 import { captureAppState } from '@/test/appStateMock';
 import { reply } from '@/test/fetchMock';
-import { listRequests, renderTransferList, rowNames, rowOf, settleRequests } from '@/test/transferListHelpers';
+import { settleRequests } from '@/test/homeHelpers';
+import { listRequests, renderTransferList, rowNames, rowOf } from '@/test/transferListHelpers';
 
 jest.mock('@/components/useDatePicker', () =>
   jest.requireActual<typeof import('@/test/datePickerMock')>('@/test/datePickerMock').datePickerMockFactory(),

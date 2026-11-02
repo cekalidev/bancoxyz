@@ -1,5 +1,6 @@
 import Svg, { Circle, Path } from 'react-native-svg';
 
+import { hiddenFromReader } from '@/components/hiddenFromReader';
 import { borders, layout } from '@/theme';
 
 type AlertIconProps = { color: string; size?: number };
@@ -15,8 +16,7 @@ export function AlertIcon({ color, size = layout.iconSize }: AlertIconProps) {
       strokeWidth={borders.strong}
       strokeLinecap="round"
       strokeLinejoin="round"
-      accessible={false}
-      importantForAccessibility="no-hide-descendants"
+      {...hiddenFromReader}
     >
       <Circle cx={12} cy={12} r={9} />
       <Path d="M12 7V13" />

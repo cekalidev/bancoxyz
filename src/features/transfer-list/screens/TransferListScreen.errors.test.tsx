@@ -10,10 +10,11 @@ import {
   transferListOf,
   transferListWrapped,
 } from '@/test/apiFixtures';
-import { exposedStrings } from '@/test/a11yTree';
+import { exposedStrings, politeRegions } from '@/test/a11yTree';
 import { mockApiRoutes, reply, type Reply } from '@/test/fetchMock';
-import { politeRegionWith, spyOnAnnouncements } from '@/test/homeHelpers';
-import { listRequests, renderTransferList, rowNames, settleRequests } from '@/test/transferListHelpers';
+import { politeRegionWith, settleRequests, spyOnAnnouncements } from '@/test/homeHelpers';
+import { advancePastTimeout } from '@/test/timers';
+import { listRequests, renderTransferList, rowNames } from '@/test/transferListHelpers';
 
 jest.mock('@/components/useDatePicker', () =>
   jest.requireActual<typeof import('@/test/datePickerMock')>('@/test/datePickerMock').datePickerMockFactory(),
@@ -52,7 +53,7 @@ async function failFirstLoad(list: Reply) {
   await renderTransferList({ list });
   if (list === 'pending') {
     await act(async () => {
-      await jest.advanceTimersByTimeAsync(15000);
+      await advancePastTimeout();
     });
   }
   await settleRequests();
@@ -79,11 +80,6 @@ describe('TransferListScreen: error en la primera carga', () => {
   );
 });
 
-// Regiones que se anuncian solas (Android) montadas en este momento.
-function politeRegions() {
-  return screen.container.queryAll((node) => node.props.accessibilityLiveRegion === 'polite');
-}
-
 describe('TransferListScreen: anuncio del error en la primera carga', () => {
   it.each(['ios', 'android'] as const)('el aviso se anuncia y no hay reintento automático', async (os) => {
     const announce = spyOnAnnouncements(os);
@@ -91,7 +87,7 @@ describe('TransferListScreen: anuncio del error en la primera carga', () => {
     const regionsBefore = politeRegions();
 
     await act(async () => {
-      await jest.advanceTimersByTimeAsync(15000);
+      await advancePastTimeout();
     });
 
     if (os === 'ios') {

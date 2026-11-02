@@ -3,7 +3,7 @@
 import { configure } from '@testing-library/react-native';
 import mockSafeAreaContext from 'react-native-safe-area-context/jest/mock';
 
-import { settlePendingFetches } from './fetchMock';
+import { settlePendingFetches } from './fetchPending';
 import { resetSecureStore } from './secureStoreMock';
 
 // Margen para findBy/waitFor cuando la máquina va cargada.

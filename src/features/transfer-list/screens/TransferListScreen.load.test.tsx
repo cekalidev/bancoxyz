@@ -3,6 +3,7 @@ import { StyleSheet } from 'react-native';
 import { act, screen } from 'expo-router/testing-library';
 
 import { ERROR_MESSAGES } from '@/services/api/errors';
+import { treeIndex } from '@/test/a11yTree';
 import { transferListEmpty } from '@/test/apiFixtures';
 import { reply, type Reply } from '@/test/fetchMock';
 import { colors } from '@/theme';
@@ -27,11 +28,6 @@ function separatorLines() {
     const style = StyleSheet.flatten(node.props.style);
     return style?.height === 1 && style.backgroundColor === colors.borderSubtle;
   });
-}
-
-// Posición del nodo en el recorrido del árbol, que es el orden en que se ve.
-function treeIndex(node: ReturnType<typeof screen.getByText>) {
-  return screen.container.queryAll(() => true).indexOf(node);
 }
 
 describe('TransferListScreen: carga del listado', () => {

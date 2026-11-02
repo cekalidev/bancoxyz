@@ -1,5 +1,4 @@
 import { act, fireEvent, renderRouter, screen } from 'expo-router/testing-library';
-import { AccessibilityInfo } from 'react-native';
 
 import { connectApiToSession } from '@/features/auth';
 import { useSessionStore } from '@/features/auth/sessionStore';
@@ -71,39 +70,12 @@ export function rowOf(name: string) {
   return screen.getByLabelText(new RegExp(`^Transferencia a ${name}, `));
 }
 
-// Deja que terminen las respuestas simuladas y las actualizaciones que provocan.
-export async function settleRequests() {
-  await act(async () => {
-    await Promise.allSettled(jest.mocked(global.fetch).mock.results.map((result) => result.value));
-    await jest.advanceTimersByTimeAsync(0);
-  });
-}
-
 // Escribe el texto en la búsqueda, sustituyendo lo que hubiera.
 export async function typeSearch(text: string) {
   await fireEvent.changeText(screen.getByLabelText('Nombre del destinatario'), text);
 }
 
 type SheetChip = 'Valor' | 'Fecha';
-type FocusTarget = { props: { accessibilityLabel?: string; children?: unknown } };
-
-function isFocusTarget(node: unknown): node is FocusTarget {
-  return typeof node === 'object' && node !== null && 'props' in node;
-}
-
-// Nombre del nodo al que se pidió llevar el foco: su etiqueta o, en un texto, el propio texto.
-function focusTargetName(node: unknown) {
-  if (!isFocusTarget(node)) return undefined;
-  const { accessibilityLabel, children } = node.props;
-  return accessibilityLabel ?? (typeof children === 'string' ? children : undefined);
-}
-
-// Nombres de los nodos que recibieron el foco del lector, en orden (también títulos sin etiqueta).
-export function spyOnReaderFocus() {
-  const sendEvent = jest.spyOn(AccessibilityInfo, 'sendAccessibilityEvent').mockClear();
-  return () => sendEvent.mock.calls.filter(([, type]) => type === 'focus').map(([node]) => focusTargetName(node));
-}
-
 // El Modal de la hoja abierta, si lo hay.
 export function sheetModal() {
   return screen.container.queryAll((node) => node.type === 'Modal')[0];

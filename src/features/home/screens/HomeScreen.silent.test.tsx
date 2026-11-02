@@ -7,6 +7,7 @@ import { captureAppState, type AppStateCapture } from '@/test/appStateMock';
 import { mockApiRoutes, reply } from '@/test/fetchMock';
 import {
   balanceRequests,
+  balanceResponse,
   holdNextResponse,
   renderHome,
   settleRequests,
@@ -17,13 +18,6 @@ const FIRST_AMOUNT = 'US$ 1.800,00';
 const NEW_AMOUNT = 'US$ 2.500,00';
 const LOADING = 'Cargando…';
 const NETWORK = ERROR_MESSAGES.network;
-
-function balanceResponse(amount: number) {
-  return new Response(JSON.stringify(balanceBody(amount, 'USD')), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' },
-  });
-}
 
 async function loadHome() {
   await renderHome();

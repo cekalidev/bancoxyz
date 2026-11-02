@@ -6,6 +6,7 @@ import type { TextInputInstance } from 'react-native';
 import { AlertIcon } from '@/components/icons/AlertIcon';
 import { TextField } from '@/components/TextField';
 import type { TextFieldProps } from '@/components/TextField';
+import { pathsOf, pathsOfIcon, strokeColorsOf } from '@/test/iconPaths';
 import { borders, colors, layout, radii, spacing, typography } from '@/theme';
 
 const LABEL = 'Correo electrónico';
@@ -156,22 +157,6 @@ function getErrorRegion() {
   return regions[0];
 }
 
-function pathsOf(node: Node) {
-  return node.queryAll((child) => typeof child.props.d === 'string').map((child) => child.props.d);
-}
-
-function strokeColorsOf(node: Node) {
-  return node.queryAll((child) => child.props.stroke !== undefined).map((child) => child.props.stroke.payload);
-}
-
-async function pathsOfAlertIcon() {
-  const { root, unmount } = await render(<AlertIcon color={colors.text} />);
-  const paths = root ? pathsOf(root) : [];
-
-  await unmount();
-  return paths;
-}
-
 function expectRegionWithoutBox(region: Node) {
   const boxKeys = Object.keys(StyleSheet.flatten(region.props.style) ?? {}).filter((key) =>
     /^(height|minHeight|margin|padding|gap)/.test(key),
@@ -193,7 +178,7 @@ describe('TextField error', () => {
     jest.replaceProperty(Platform, 'OS', 'ios');
     const announce = jest.spyOn(AccessibilityInfo, 'announceForAccessibility');
     announce.mockClear();
-    const iconPaths = await pathsOfAlertIcon();
+    const iconPaths = await pathsOfIcon(AlertIcon, colors.text);
     await renderField();
     const region = getErrorRegion();
 

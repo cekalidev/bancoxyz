@@ -38,13 +38,14 @@ describe('Button primary', () => {
     const button = getButton();
 
     expect(button).toHaveStyle({
-      height: layout.buttonHeight,
+      minHeight: layout.buttonHeight,
       borderRadius: radii.pill,
       paddingHorizontal: spacing.xl,
       overflow: 'hidden',
       alignItems: 'center',
       justifyContent: 'center',
     });
+    expect(StyleSheet.flatten(button.props.style)).not.toHaveProperty('height');
     expect(within(button).getByText(LABEL)).toHaveStyle({
       ...typography.button,
       color: colors.textOnAccent,
@@ -56,6 +57,17 @@ describe('Button primary', () => {
     expect(gradient.props.colors).toEqual(gradients.cta.colors.map((color) => processColor(color)));
     expect(gradient.props.startPoint).toEqual([gradients.cta.start.x, gradients.cta.start.y]);
     expect(gradient.props.endPoint).toEqual([gradients.cta.end.x, gradients.cta.end.y]);
+  });
+
+  it('el principal crece en alto con su texto y no tiene alto fijo', async () => {
+    await renderButton();
+
+    const button = getButton();
+
+    expect(layout.buttonHeight).toBe(52);
+    expect(button).toHaveStyle({ minHeight: layout.buttonHeight, paddingVertical: spacing.sm });
+    expect(StyleSheet.flatten(button.props.style)).not.toHaveProperty('height');
+    expect(within(button).getByText(LABEL).props.numberOfLines).toBeUndefined();
   });
 });
 
@@ -122,10 +134,11 @@ describe('Button en envío', () => {
     expect(button).toHaveAccessibleName(BUSY_LABEL);
     expect(button).toHaveStyle({
       backgroundColor: colors.disabledBg,
-      height: layout.buttonHeight,
+      minHeight: layout.buttonHeight,
       borderRadius: radii.pill,
       paddingHorizontal: spacing.xl,
     });
+    expect(StyleSheet.flatten(button.props.style)).not.toHaveProperty('height');
     expect(within(button).getByText(BUSY_LABEL)).toHaveStyle({
       ...typography.button,
       color: colors.disabledText,

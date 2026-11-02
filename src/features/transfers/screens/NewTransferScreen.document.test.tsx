@@ -1,5 +1,6 @@
 import { fireEvent, screen } from 'expo-router/testing-library';
 
+import { treeIndex } from '@/test/a11yTree';
 import { settleRequests } from '@/test/homeHelpers';
 import { pasteInto, renderTransferFlow, typeAmount, typeDocument } from '@/test/transferHelpers';
 
@@ -10,11 +11,6 @@ jest.mock('@/components/useDatePicker', () =>
 const DOCUMENT = 'Documento del destinatario';
 const EMPTY = 'Escribe el documento del destinatario.';
 const LENGTH = 'El documento debe tener 11 dígitos (CPF) o 14 (CNPJ).';
-
-// Posición del nodo en el recorrido del árbol, que es el orden visual.
-function treeIndex(node: ReturnType<typeof screen.getByText>) {
-  return screen.container.queryAll(() => true).indexOf(node);
-}
 
 function expectErrorUnderDocument(message: string) {
   const error = screen.getByText(message);

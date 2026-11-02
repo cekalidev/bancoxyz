@@ -7,7 +7,8 @@ import { getBalance } from '@/services/api/balance';
 import { ERROR_MESSAGES } from '@/services/api/errors';
 import type { Session } from '@/services/api/types';
 import { balanceOk, loginOk, sessionUnauthorized } from '@/test/apiFixtures';
-import { mockApiRoutes, mockFetchPendingEach, mockFetchResponse, reply } from '@/test/fetchMock';
+import { mockApiRoutes, mockFetchResponse, reply } from '@/test/fetchMock';
+import { mockFetchPendingEach } from '@/test/fetchPending';
 import { failDeletes, secureStoreModule, storedValue } from '@/test/secureStoreMock';
 import { prepareAppTest, relaunchApp, renderApp, seedSession } from '@/test/sessionHelpers';
 

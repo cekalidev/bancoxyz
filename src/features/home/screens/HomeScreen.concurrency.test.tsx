@@ -2,10 +2,10 @@ import { router } from 'expo-router';
 import { act, fireEvent, screen } from 'expo-router/testing-library';
 
 import { captureAppState, type AppStateCapture } from '@/test/appStateMock';
-import { defer } from '@/test/defer';
 import {
   balanceRequests,
   balanceResponse,
+  holdFirstLoad,
   holdNextResponse,
   renderHome,
   settleRequests,
@@ -63,8 +63,7 @@ describe('HomeScreen: una sola petición al entrar y al volver', () => {
 
   it('si salgo y vuelvo antes de que responda no pide otra y muestra su resultado', async () => {
     // La primera respuesta queda en espera; el montaje fija después las demás respuestas de la red.
-    const pending = defer<Response>();
-    jest.spyOn(global, 'fetch').mockImplementationOnce(() => pending.promise);
+    const pending = holdFirstLoad();
     await renderHome();
     expect(balanceRequests()).toHaveLength(1);
 

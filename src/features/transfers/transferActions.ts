@@ -1,7 +1,6 @@
 import { INITIAL_TRANSFER_STATE, useTransferStore } from './transferStore';
+import { TRANSFER_WINDOW_MS } from './transferWindow';
 import type { TransferAttempt, TransferDraft } from './types';
-
-const RETENTION_MS = 10 * 60 * 1000;
 
 export function startNewDraft(): void {
   useTransferStore.setState({ draft: null, lastAttempt: null });
@@ -16,7 +15,7 @@ export function setSending(sending: boolean): void {
 }
 
 export function finishAttempt(attempt: TransferAttempt): void {
-  const oldest = Date.now() - RETENTION_MS;
+  const oldest = Date.now() - TRANSFER_WINDOW_MS;
   useTransferStore.setState((state) => ({
     sending: false,
     lastAttempt: attempt,

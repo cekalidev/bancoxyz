@@ -1,5 +1,6 @@
 import { fireEvent, screen } from 'expo-router/testing-library';
 
+import { treeIndex } from '@/test/a11yTree';
 import { balanceBody } from '@/test/apiFixtures';
 import { reply } from '@/test/fetchMock';
 import { settleRequests } from '@/test/homeHelpers';
@@ -15,11 +16,6 @@ const AMOUNT_ERRORS = [
   'El valor debe ser mayor que 0.',
   'El valor supera tu saldo disponible.',
 ];
-
-// Posición del nodo en el recorrido del árbol, que es el orden visual.
-function treeIndex(node: ReturnType<typeof screen.getByText>) {
-  return screen.container.queryAll(() => true).indexOf(node);
-}
 
 async function pressContinue() {
   await fireEvent.press(screen.getByRole('button', { name: 'Continuar' }));

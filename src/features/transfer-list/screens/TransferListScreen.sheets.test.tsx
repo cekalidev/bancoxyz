@@ -1,13 +1,7 @@
 import { act, fireEvent, screen } from 'expo-router/testing-library';
 
-import {
-  listRequests,
-  openSheet,
-  rowNames,
-  sheetModal,
-  showSheet,
-  spyOnReaderFocus,
-} from '@/test/transferListHelpers';
+import { spyOnReaderFocus } from '@/test/focus';
+import { listRequests, openSheet, rowNames, sheetModal, showSheet } from '@/test/transferListHelpers';
 import {
   amountSheetTitle,
   applyAmountRange,

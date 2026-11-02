@@ -1,4 +1,4 @@
-import { fireEvent, screen } from 'expo-router/testing-library';
+import { screen } from 'expo-router/testing-library';
 
 import { transferOk } from '@/test/apiFixtures';
 import { mockApiRoutes, reply, type Reply } from '@/test/fetchMock';
@@ -10,6 +10,7 @@ import {
   renderTransferFlow,
   transferRequests,
 } from '@/test/transferHelpers';
+import { pressButton } from '@/test/transferSessionHelpers';
 import type { CalendarDate } from '@/utils/date';
 
 jest.mock('@/components/useDatePicker', () =>
@@ -22,8 +23,6 @@ const REJECTED = 'No pudimos hacer la transferencia. Revisa los datos e inténta
 const REJECTION = reply(400, { message: 'Bad Request: dados inválidos' });
 
 afterEach(jest.restoreAllMocks);
-
-const pressButton = (name: string) => fireEvent.press(screen.getByRole('button', { name }));
 
 // Rellena el formulario con 1.250,00 al CPF de prueba (hoy si no se elige otra fecha),
 // llega a la confirmación y confirma.

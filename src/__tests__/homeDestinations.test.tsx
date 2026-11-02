@@ -2,11 +2,12 @@ import { router } from 'expo-router';
 import { act, fireEvent, screen, testRouter } from 'expo-router/testing-library';
 
 import type { Session } from '@/services/api/types';
-import { accessibleOrder } from '@/test/a11yTree';
+import { accessibleOrder, treeIndex } from '@/test/a11yTree';
 import { balanceBody } from '@/test/apiFixtures';
 import { mockApiRoutes, reply } from '@/test/fetchMock';
 import { balanceRequests, settleRequests } from '@/test/homeHelpers';
 import { prepareAppTest, renderApp, seedSession } from '@/test/sessionHelpers';
+import { SPINNER_TYPES } from '@/test/spinners';
 
 jest.mock('expo-font', () => ({ useFonts: jest.fn(() => [true, null]) }));
 
@@ -19,7 +20,6 @@ const FIRST_AMOUNT = 'US$\u00a01.800,00';
 const NEW_AMOUNT = 'US$\u00a02.500,00';
 const SCROLL_TYPES = ['RCTScrollView'];
 const REFRESH_TYPES = ['RCTRefreshControl', 'AndroidSwipeRefreshLayout'];
-const SPINNER_TYPES = ['RCTActivityIndicatorView', 'AndroidProgressBar', 'ActivityIndicator'];
 
 const session: Session = {
   token: 'token-de-prueba',
@@ -30,11 +30,6 @@ const destinations = [{ path: '/transferencias', title: 'Transferencias' }];
 
 function nodesOfType(types: string[]) {
   return screen.container.queryAll((node) => types.includes(String(node.type)));
-}
-
-// Posición del nodo en el recorrido del árbol, que es el orden de lectura.
-function treeIndex(node: ReturnType<typeof screen.getByText>) {
-  return screen.container.queryAll(() => true).indexOf(node);
 }
 
 // Abre el destino directamente y espera a que se pinte su contenido.
@@ -122,8 +117,8 @@ describe('orden de lectura de la cabecera y los destinos', () => {
     await settleRequests();
 
     const order = accessibleOrder();
-    // Logo, título y Salir, en ese orden, antes que el saludo.
-    expect(order.slice(0, order.indexOf(GREETING))).toEqual(['BancoXYZ', 'BancoXYZ', 'Cerrar sesión']);
+    // Logo y Salir, en ese orden, antes que el saludo: el título de la marca no se lee.
+    expect(order.slice(0, order.indexOf(GREETING))).toEqual(['BancoXYZ', 'Cerrar sesión']);
   });
 });
 

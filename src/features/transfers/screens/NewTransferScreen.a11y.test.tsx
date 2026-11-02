@@ -1,12 +1,12 @@
-import { render } from '@testing-library/react-native';
-import { act, fireEvent, screen, within } from 'expo-router/testing-library';
-import { DeviceEventEmitter, Platform, StyleSheet } from 'react-native';
+import { fireEvent, screen } from 'expo-router/testing-library';
+import { Platform } from 'react-native';
 
-import { AlertIcon } from '@/components/icons/AlertIcon';
-import { accessibleOrder } from '@/test/a11yTree';
+import { accessibleOrder, expectInTreeOrder } from '@/test/a11yTree';
 import { politeRegionWith, settleRequests, spyOnAnnouncements } from '@/test/homeHelpers';
+import { alertIconPaths, pathsOf } from '@/test/iconPaths';
+import { formScrollView, openKeyboard } from '@/test/keyboard';
 import { chooseDate, renderTransferFlow, typeAmount } from '@/test/transferHelpers';
-import { colors, layout } from '@/theme';
+import { layout } from '@/theme';
 import { currencySymbol } from '@/utils/money';
 
 jest.mock('@/components/useDatePicker', () =>
@@ -31,55 +31,11 @@ async function openForm() {
 
 type Node = ReturnType<typeof screen.getByText>;
 
-function pathsOf(node: Node) {
-  return node.queryAll((child) => typeof child.props.d === 'string').map((child) => String(child.props.d));
-}
-
-async function alertIconPaths() {
-  const { root, unmount } = await render(<AlertIcon color={colors.error} />);
-  const paths = root ? pathsOf(root) : [];
-  await unmount();
-  return paths;
-}
-
-// Pantalla de 800 de alto con el teclado desde el punto 500: tapa 300 por abajo.
-const FORM_FRAME = { x: 0, y: 0, width: 360, height: 800 };
-const KEYBOARD = { screenX: 0, screenY: 500, width: 360, height: 300 };
 const SAFE_TOP = 24;
-
-function formScrollView() {
-  const scrolls = screen.container.queryAll((node) => node.type === 'RCTScrollView');
-  const form = scrolls.find((node) => within(node).queryByRole('button', { name: 'Continuar' }) !== null);
-  if (!form) throw new Error('No hay scroll con el formulario');
-  return form;
-}
 
 function useSafeTop(top: number) {
   const safeArea = jest.requireMock<typeof import('react-native-safe-area-context')>('react-native-safe-area-context');
   jest.spyOn(safeArea, 'useSafeAreaInsets').mockReturnValue({ top, bottom: 0, left: 0, right: 0 });
-}
-
-// Coloca el contenedor del formulario y abre el teclado; devuelve el hueco que deja abajo.
-async function openKeyboard(os: 'ios' | 'android') {
-  const avoiding = formScrollView().parent;
-  if (!avoiding) throw new Error('El scroll del formulario no tiene contenedor');
-  await fireEvent(avoiding, 'layout', { persist: () => undefined, nativeEvent: { layout: FORM_FRAME } });
-  const event = os === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
-  await act(async () => {
-    DeviceEventEmitter.emit(event, { endCoordinates: KEYBOARD, duration: 0, easing: 'keyboard' });
-  });
-  return StyleSheet.flatten(avoiding.props.style).paddingBottom;
-}
-
-// Posición del nodo en el recorrido del árbol, que es el orden visual.
-function treeIndex(node: Node) {
-  return screen.container.queryAll(() => true).indexOf(node);
-}
-
-function expectInTreeOrder(nodes: Node[]) {
-  const positions = nodes.map(treeIndex);
-  expect(positions).toEqual([...positions].sort((a, b) => a - b));
-  expect(new Set(positions).size).toBe(nodes.length);
 }
 
 // Campo, lo que se lee justo detrás (ayuda o error) y así hasta «Continuar».

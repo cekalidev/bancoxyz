@@ -10,6 +10,7 @@ import {
   settleRequests,
   spyOnAnnouncements,
 } from '@/test/homeHelpers';
+import { advancePastTimeout } from '@/test/timers';
 
 const NETWORK = ERROR_MESSAGES.network;
 const UNKNOWN = ERROR_MESSAGES.unknown;
@@ -30,7 +31,7 @@ async function failFirstLoad(balance: Reply) {
   await renderHome({ balance });
   if (balance === 'pending') {
     await act(async () => {
-      await jest.advanceTimersByTimeAsync(15000);
+      await advancePastTimeout();
     });
   }
   await settleRequests();

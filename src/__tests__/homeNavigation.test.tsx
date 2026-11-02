@@ -1,11 +1,10 @@
 import { router } from 'expo-router';
 import { act, fireEvent, screen } from 'expo-router/testing-library';
-import { Alert, type AlertButton } from 'react-native';
 
 import { useSessionStore } from '@/features/auth/sessionStore';
 import type { Session } from '@/services/api/types';
-import { defer } from '@/test/defer';
-import { balanceRequests, balanceResponse, settleRequests } from '@/test/homeHelpers';
+import { chooseInDialog, spyOnAlert } from '@/test/dialog';
+import { balanceRequests, balanceResponse, holdFirstLoad, settleRequests } from '@/test/homeHelpers';
 import { prepareAppTest, renderApp, seedSession } from '@/test/sessionHelpers';
 
 jest.mock('expo-font', () => ({ useFonts: jest.fn(() => [true, null]) }));
@@ -29,25 +28,6 @@ async function openHome() {
   expect(await screen.findByRole('header', { name: GREETING })).toBeOnTheScreen();
   await settleRequests();
   expect(screen.getByText(FIRST_AMOUNT)).toBeOnTheScreen();
-}
-
-// Retiene la primera respuesta del saldo; las siguientes siguen las rutas simuladas.
-function holdFirstLoad() {
-  const firstLoad = defer<Response>();
-  jest.spyOn(global, 'fetch').mockImplementationOnce(() => firstLoad.promise);
-  return firstLoad;
-}
-
-function spyOnAlert() {
-  return jest.spyOn(Alert, 'alert').mockImplementation(() => undefined);
-}
-
-// Pulsa un botón del diálogo espiado como lo haría el sistema.
-async function chooseInDialog(alert: ReturnType<typeof spyOnAlert>, text: string) {
-  const buttons: AlertButton[] = alert.mock.calls[0]?.[2] ?? [];
-  const button = buttons.find((candidate) => candidate.text === text);
-  if (!button) throw new Error(`El diálogo no tiene el botón ${text}`);
-  await act(async () => button.onPress?.());
 }
 
 beforeEach(prepareAppTest);
@@ -139,7 +119,7 @@ describe('cabecera del Inicio', () => {
   it('la cabecera del Inicio es la de siempre con BancoXYZ y Salir', async () => {
     await openHome();
 
-    expect(screen.getByRole('header', { name: 'BancoXYZ' })).toBeOnTheScreen();
+    expect(screen.getByRole('image', { name: 'BancoXYZ' })).toBeOnTheScreen();
     const logout = screen.getByRole('button', { name: 'Cerrar sesión' });
     expect(logout).toHaveTextContent('Salir');
     expect(screen.queryByRole('button', { name: 'Volver' })).toBeNull();

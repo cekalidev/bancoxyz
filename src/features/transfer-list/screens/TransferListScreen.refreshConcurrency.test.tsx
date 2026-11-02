@@ -2,17 +2,21 @@ import { act, fireEvent, screen } from 'expo-router/testing-library';
 
 import { transferListOf, transfersOk } from '@/test/apiFixtures';
 import { captureAppState, type AppStateCapture } from '@/test/appStateMock';
-import { mockFetchPendingEach } from '@/test/fetchMock';
-import { listRequests, renderTransferList, rowNames, settleRequests } from '@/test/transferListHelpers';
-import { holdNextList, returnFromBackground, visitNewTransferAndBack } from '@/test/transferListRefreshHelpers';
+import { mockFetchPendingEach } from '@/test/fetchPending';
+import { settleRequests } from '@/test/homeHelpers';
+import { listRequests, renderTransferList, rowNames } from '@/test/transferListHelpers';
+import {
+  holdNextList,
+  REAL_NAMES,
+  returnFromBackground,
+  visitNewTransferAndBack,
+} from '@/test/transferListRefreshHelpers';
 
 jest.mock('@/components/useDatePicker', () =>
   jest.requireActual<typeof import('@/test/datePickerMock')>('@/test/datePickerMock').datePickerMockFactory(),
 );
 
 afterEach(jest.restoreAllMocks);
-
-const REAL_NAMES = ['Ronaldo de Assis Moreira', 'Lionel Andres Messi', 'Federico Valverde'];
 
 let appState: AppStateCapture;
 

@@ -6,6 +6,7 @@ import type { PressableInstance } from 'react-native';
 import { DateField } from '@/components/DateField';
 import type { DateFieldProps } from '@/components/DateField';
 import { CalendarIcon } from '@/components/icons/CalendarIcon';
+import { pathsOf, pathsOfIcon, strokeColorsOf } from '@/test/iconPaths';
 import { borders, colors, layout, radii, spacing, typography } from '@/theme';
 
 const LABEL = 'Fecha de la transferencia';
@@ -38,24 +39,6 @@ function getButton() {
   return screen.getByRole('button', { name: SPOKEN });
 }
 
-type Node = ReturnType<typeof getButton>;
-
-function pathsOf(node: Node) {
-  return node.queryAll((child) => typeof child.props.d === 'string').map((child) => child.props.d);
-}
-
-function strokeColorsOf(node: Node) {
-  return node.queryAll((child) => child.props.stroke !== undefined).map((child) => child.props.stroke.payload);
-}
-
-async function pathsOfCalendarIcon() {
-  const { root, unmount } = await render(<CalendarIcon color={colors.text} />);
-  const paths = root ? pathsOf(root) : [];
-
-  await unmount();
-  return paths;
-}
-
 describe('DateField como botón', () => {
   it('es un botón con su etiqueta hablada y la pista Abre el calendario', async () => {
     const onPress = jest.fn();
@@ -86,7 +69,7 @@ describe('DateField como botón', () => {
 
 describe('DateField aspecto', () => {
   it('muestra el icono de calendario y el estado de error', async () => {
-    const iconPaths = await pathsOfCalendarIcon();
+    const iconPaths = await pathsOfIcon(CalendarIcon, colors.text);
     await renderField();
 
     const button = getButton();

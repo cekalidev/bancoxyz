@@ -6,6 +6,7 @@ import { ERROR_MESSAGES } from '@/services/api/errors';
 import { balanceBody, transferListWrapped } from '@/test/apiFixtures';
 import { captureAppState, type AppStateCapture } from '@/test/appStateMock';
 import { mockApiRoutes, reply } from '@/test/fetchMock';
+import { spyOnFocusEvents } from '@/test/focus';
 import {
   balanceRequests,
   balanceResponse,
@@ -13,7 +14,6 @@ import {
   renderHome,
   settleRequests,
   spyOnAnnouncements,
-  spyOnFocusEvents,
 } from '@/test/homeHelpers';
 
 const FIRST_AMOUNT = 'US$ 1.800,00';

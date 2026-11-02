@@ -1,7 +1,9 @@
-import { fireEvent, screen, testRouter } from 'expo-router/testing-library';
+import { screen, testRouter } from 'expo-router/testing-library';
 
 import type { TransferDraft } from '@/features/transfers/types';
-import { settleRequests, spyOnFocusEvents } from '@/test/homeHelpers';
+import { treeIndex } from '@/test/a11yTree';
+import { spyOnFocusEvents } from '@/test/focus';
+import { settleRequests } from '@/test/homeHelpers';
 import {
   chooseDate,
   fillValidForm,
@@ -10,6 +12,7 @@ import {
   renderTransferFlow,
   transferRequests,
 } from '@/test/transferHelpers';
+import { pressButton } from '@/test/transferSessionHelpers';
 
 jest.mock('@/components/useDatePicker', () =>
   jest.requireActual<typeof import('@/test/datePickerMock')>('@/test/datePickerMock').datePickerMockFactory(),
@@ -88,19 +91,17 @@ describe('ConfirmTransferScreen: sin borrador', () => {
   });
 });
 
-const pressButton = (name: string) => () => fireEvent.press(screen.getByRole('button', { name }));
-
 describe('ConfirmTransferScreen: volver a editar', () => {
   it.each([
-    { name: 'Editar datos', leave: pressButton('Editar datos') },
-    { name: 'Volver', leave: pressButton('Volver') },
+    { name: 'Editar datos', leave: () => pressButton('Editar datos') },
+    { name: 'Volver', leave: () => pressButton('Volver') },
     { name: 'atrás del sistema', leave: () => testRouter.back('/nueva-transferencia') },
   ])('Editar datos, Volver y atrás vuelven al formulario intacto y sin errores nuevos: «$name»', async ({ leave }) => {
     await openForm();
     await fillValidForm();
     await chooseDate({ year: 2026, month: 11, day: 15 });
     await letPickerClose();
-    await pressButton('Continuar')();
+    await pressButton('Continuar');
     expect(screen).toHavePathname('/nueva-transferencia/confirmar');
 
     await leave();
@@ -121,11 +122,11 @@ async function confirmAfterMidnight() {
   await renderTransferFlow({ now: new Date(2026, 9, 31, 23, 59, 30) });
   await settleRequests();
   await fillValidForm();
-  await pressButton('Continuar')();
+  await pressButton('Continuar');
   expect(screen.getByText('Hoy, 31/10/2026')).toBeOnTheScreen();
 
   jest.setSystemTime(new Date(2026, 10, 1, 0, 0, 10));
-  await pressButton('Confirmar transferencia')();
+  await pressButton('Confirmar transferencia');
   await settleRequests();
 }
 
@@ -137,11 +138,6 @@ describe('ConfirmTransferScreen: paso de la medianoche', () => {
     expect(screen).toHavePathname('/nueva-transferencia');
   });
 });
-
-// Posición del nodo en el recorrido del árbol, que es el orden visual.
-function treeIndex(node: ReturnType<typeof screen.getByText>) {
-  return screen.container.queryAll(() => true).indexOf(node);
-}
 
 describe('ConfirmTransferScreen: paso de la medianoche en el formulario', () => {
   it('si pasa la medianoche, al confirmar no envía y vuelve al formulario con el error de fecha y el foco en ella', async () => {

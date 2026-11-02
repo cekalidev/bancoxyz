@@ -4,6 +4,7 @@ import { ERROR_MESSAGES } from '@/services/api/errors';
 import { balanceOk } from '@/test/apiFixtures';
 import { mockApiRoutes, reply, type Reply } from '@/test/fetchMock';
 import { balanceResponse, politeRegionWith, settleRequests, spyOnAnnouncements } from '@/test/homeHelpers';
+import { advancePastTimeout } from '@/test/timers';
 import { formBalanceRequests, renderTransferFlow } from '@/test/transferHelpers';
 
 jest.mock('@/components/useDatePicker', () =>
@@ -28,7 +29,7 @@ async function failFormLoad(balance: Reply) {
   await renderTransferFlow({ balance });
   if (balance === 'pending') {
     await act(async () => {
-      await jest.advanceTimersByTimeAsync(15000);
+      await advancePastTimeout();
     });
   }
   await settleRequests();

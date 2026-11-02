@@ -3,8 +3,7 @@ import { screen } from 'expo-router/testing-library';
 import type { CalendarDate } from '@/utils/date';
 
 import { lastPickerRequest } from '@/test/datePickerMock';
-import { focusedFieldLabels, watchFocus } from '@/test/focus';
-import { spyOnFocusEvents } from '@/test/homeHelpers';
+import { focusedFieldLabels, spyOnFocusEvents, watchFocus } from '@/test/focus';
 import { listRequests, openSheet, rowNames, showSheet } from '@/test/transferListHelpers';
 import {
   BOUND_LABELS,
