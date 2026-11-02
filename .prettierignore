@@ -1,0 +1,5 @@
+**/*.test.ts
+**/*.test.tsx
+src/test/
+src/__tests__/
+**/*.cases.ts

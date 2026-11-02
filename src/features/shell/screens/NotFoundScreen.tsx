@@ -11,11 +11,7 @@ export function NotFoundScreen() {
         Esta pantalla no existe
       </Text>
       <Link href="/" replace asChild>
-        <Pressable
-          accessibilityRole="link"
-          accessibilityLabel="Volver al inicio"
-          style={styles.link}
-        >
+        <Pressable accessibilityRole="link" accessibilityLabel="Volver al inicio" style={styles.link}>
           <Text style={styles.linkText}>Volver al inicio</Text>
         </Pressable>
       </Link>

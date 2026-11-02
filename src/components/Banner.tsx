@@ -55,13 +55,7 @@ export function Banner({ variant, message, action, announceKey }: BannerProps) {
 function BannerAction({ label, onPress, busy, align, busyLabel }: BannerActionProps) {
   return (
     <View style={[styles.action, align === 'center' ? styles.center : styles.end]}>
-      <Button
-        variant="secondary"
-        label={label}
-        onPress={onPress}
-        busy={busy}
-        busyLabel={busyLabel}
-      />
+      <Button variant="secondary" label={label} onPress={onPress} busy={busy} busyLabel={busyLabel} />
     </View>
   );
 }

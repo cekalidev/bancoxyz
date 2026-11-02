@@ -9,7 +9,7 @@ import { documentDigitsFrom } from '@/utils/document';
 import { recheckField } from './recheckTransferField';
 import type { TransferErrors, TransferField } from './types';
 import { useDateFieldPicker } from './useDateFieldPicker';
-import type { TransferValues } from './validateTransfer';
+import type { TransferLimits, TransferValues } from './validateTransfer';
 
 const EMPTY_AMOUNT: AmountInput = { text: '', cents: null };
 
@@ -20,6 +20,14 @@ function useFieldRefs() {
   return { amountRef, documentRef, dateRef };
 }
 
+// Errores por campo; `recheck` revalida el campo cambiado con su valor nuevo, antes del siguiente render.
+function useTransferErrors(values: TransferValues, limits: TransferLimits) {
+  const [errors, setErrors] = useState<TransferErrors>({});
+  const recheck = (field: TransferField, changed: Partial<TransferValues>) =>
+    setErrors((current) => recheckField(current, field, { values: { ...values, ...changed }, limits }));
+  return { errors, setErrors, recheck };
+}
+
 // Estado local de los campos: vacíos y con la fecha de hoy al abrir el formulario.
 // El tope es el saldo recibido truncado a centavos: la ayuda y la validación usan el mismo.
 export function useTransferFields(balance: Balance) {
@@ -27,14 +35,11 @@ export function useTransferFields(balance: Balance) {
   const [amount, setAmount] = useState(EMPTY_AMOUNT);
   const [documentDigits, setDocumentDigits] = useState('');
   const [date, setDate] = useState(today);
-  const [errors, setErrors] = useState<TransferErrors>({});
   const refs = useFieldRefs();
   const capCents = truncateToCents(balance.amount);
   const values: TransferValues = { cents: amount.cents, document: documentDigits, date };
 
-  const recheck = (field: TransferField, changed: Partial<TransferValues>) =>
-    setErrors((current) => recheckField(current, field, { values: { ...values, ...changed }, limits: { capCents, today } }));
-
+  const { errors, setErrors, recheck } = useTransferErrors(values, { capCents, today });
   const changeAmount = (text: string) => {
     const next = applyAmountInput(amount.text, text);
     setAmount(next);
@@ -51,5 +56,17 @@ export function useTransferFields(balance: Balance) {
   };
   const picker = useDateFieldPicker({ date, today, onPick: changeDate, fieldRef: refs.dateRef });
 
-  return { capCents, today, setToday, amountText: amount.text, values, errors, setErrors, changeAmount, changeDocument, ...picker, refs };
+  return {
+    capCents,
+    today,
+    setToday,
+    amountText: amount.text,
+    values,
+    errors,
+    setErrors,
+    changeAmount,
+    changeDocument,
+    ...picker,
+    refs,
+  };
 }

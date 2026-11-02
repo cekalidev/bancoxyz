@@ -39,8 +39,7 @@ export function spokenSummary(draft: TransferDraft, today: CalendarDate): string
   return `Vas a transferir ${money} al ${documentLabel(draft.document)}, ${when}`;
 }
 
-export const REJECTED_MESSAGE =
-  'No pudimos hacer la transferencia. Revisa los datos e inténtalo de nuevo.';
+export const REJECTED_MESSAGE = 'No pudimos hacer la transferencia. Revisa los datos e inténtalo de nuevo.';
 
 export function duplicateMessage(minutes: number): string {
   return `Ya enviaste una transferencia igual hace ${minutes} min. ¿Quieres enviar otra?`;

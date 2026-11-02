@@ -1,9 +1,4 @@
-export type ApiErrorKind =
-  | 'badRequest'
-  | 'invalidCredentials'
-  | 'unauthorized'
-  | 'network'
-  | 'unknown';
+export type ApiErrorKind = 'badRequest' | 'invalidCredentials' | 'unauthorized' | 'network' | 'unknown';
 
 export const ERROR_MESSAGES: Record<ApiErrorKind, string> = {
   badRequest: 'Revisa los datos e inténtalo de nuevo.',

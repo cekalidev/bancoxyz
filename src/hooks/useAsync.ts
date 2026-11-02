@@ -1,4 +1,12 @@
-import { type Dispatch, type SetStateAction, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import {
+  type Dispatch,
+  type SetStateAction,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 
 export type RunOutcome = 'success' | 'error' | 'ignored' | 'skipped' | 'discarded';
 
@@ -13,6 +21,14 @@ export type UseAsyncResult<T> = AsyncState<T> & { run: (runOptions?: RunOptions)
 const initialState = { data: undefined, error: null, pending: false, errorId: 0 };
 
 type SetState<T> = Dispatch<SetStateAction<AsyncState<T>>>;
+
+function startPending<T>(setState: SetState<T>, clearError: boolean | undefined): void {
+  setState((current) => ({
+    ...current,
+    pending: true,
+    error: clearError ? null : current.error,
+  }));
+}
 
 function settleSuccess<T>(setState: SetState<T>, data: T): RunOutcome {
   setState((current) => ({ ...current, data, error: null, pending: false }));
@@ -45,7 +61,7 @@ export function useAsync<T>(task: () => Promise<T>, options?: UseAsyncOptions): 
   const run = useCallback(async (runOptions?: RunOptions): Promise<RunOutcome> => {
     if (inFlight.current) return 'skipped';
     inFlight.current = true;
-    setState((current) => ({ ...current, pending: true, error: runOptions?.clearError ? null : current.error }));
+    startPending(setState, runOptions?.clearError);
     try {
       const data = await taskRef.current();
       if (!mounted.current) return 'discarded';

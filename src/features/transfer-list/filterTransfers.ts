@@ -8,9 +8,7 @@ import type { AmountBounds, DateBounds, IndexedTransfer, ListFilters } from './t
 export function sortNewestFirst(transfers: Transfer[]): IndexedTransfer[] {
   return transfers
     .map((transfer, receivedIndex) => ({ transfer, receivedIndex }))
-    .sort(
-      (a, b) => compareDates(b.transfer.date, a.transfer.date) || a.receivedIndex - b.receivedIndex,
-    );
+    .sort((a, b) => compareDates(b.transfer.date, a.transfer.date) || a.receivedIndex - b.receivedIndex);
 }
 
 export function matchesQuery(name: string, query: string): boolean {

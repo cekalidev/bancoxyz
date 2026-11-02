@@ -44,8 +44,7 @@ export function amountChipLabel(bounds: AmountBounds, currency: string | null): 
   if (wording === null) return UNFILTERED_LABEL;
 
   const lastCents = bounds.max ?? bounds.min;
-  const name =
-    currency === null ? '' : ` ${currencyName(currency, lastCents === ONE_UNIT_IN_CENTS)}`;
+  const name = currency === null ? '' : ` ${currencyName(currency, lastCents === ONE_UNIT_IN_CENTS)}`;
 
   return `Filtro de valor: ${wording}${name}`;
 }

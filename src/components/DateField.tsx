@@ -59,7 +59,14 @@ function CalendarButton({ onPress }: Pick<BoxProps, 'onPress'>) {
   );
 }
 
-function BoxWithAction({ text, spokenLabel, onPress, fieldRef, invalid, right }: BoxProps & { right: ReactNode }) {
+function BoxWithAction({
+  text,
+  spokenLabel,
+  onPress,
+  fieldRef,
+  invalid,
+  right,
+}: BoxProps & { right: ReactNode }) {
   return (
     <View style={boxStyles(invalid)}>
       <Pressable
@@ -78,7 +85,16 @@ function BoxWithAction({ text, spokenLabel, onPress, fieldRef, invalid, right }:
   );
 }
 
-export function DateField({ label, text, spokenLabel, hint, error, onPress, fieldRef, right }: DateFieldProps) {
+export function DateField({
+  label,
+  text,
+  spokenLabel,
+  hint,
+  error,
+  onPress,
+  fieldRef,
+  right,
+}: DateFieldProps) {
   const box = { text, spokenLabel, onPress, fieldRef, invalid: Boolean(error) };
 
   return (

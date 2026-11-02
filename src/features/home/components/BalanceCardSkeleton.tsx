@@ -9,12 +9,7 @@ export function BalanceCardSkeleton() {
   const { fontScale } = useWindowDimensions();
 
   return (
-    <View
-      accessible
-      accessibilityLabel="Cargando…"
-      accessibilityState={{ busy: true }}
-      style={styles.card}
-    >
+    <View accessible accessibilityLabel="Cargando…" accessibilityState={{ busy: true }} style={styles.card}>
       <LinearGradient
         testID="balance-skeleton-gradient"
         {...gradients.brand}

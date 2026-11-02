@@ -20,9 +20,7 @@ export function validateDocument(digits: string): string | undefined {
     return 'Escribe el documento del destinatario.';
   }
 
-  return documentKind(digits) === null
-    ? 'El documento debe tener 11 dígitos (CPF) o 14 (CNPJ).'
-    : undefined;
+  return documentKind(digits) === null ? 'El documento debe tener 11 dígitos (CPF) o 14 (CNPJ).' : undefined;
 }
 
 export function validateDate(date: CalendarDate, today: CalendarDate): string | undefined {
@@ -30,9 +28,7 @@ export function validateDate(date: CalendarDate, today: CalendarDate): string | 
     return 'La fecha no puede ser anterior a hoy.';
   }
 
-  return isBefore(addOneYear(today), date)
-    ? 'Elige una fecha dentro del próximo año.'
-    : undefined;
+  return isBefore(addOneYear(today), date) ? 'Elige una fecha dentro del próximo año.' : undefined;
 }
 
 export type TransferValues = { cents: number | null; document: string; date: CalendarDate };

@@ -19,14 +19,8 @@ export function LoginScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      style={styles.screen}
-    >
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={[styles.content, safeArea]}
-      >
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.screen}>
+      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.content, safeArea]}>
         <LoginHeader />
         <View style={expiredNotice ? styles.notice : null}>
           <Banner variant="info" message={expiredNotice} />

@@ -29,11 +29,7 @@ export function BalanceCard({ balance, cardRef, hidden, onToggleHidden }: Balanc
 
   return (
     <View style={styles.card}>
-      <LinearGradient
-        testID="balance-card-gradient"
-        {...gradients.brand}
-        style={StyleSheet.absoluteFill}
-      />
+      <LinearGradient testID="balance-card-gradient" {...gradients.brand} style={StyleSheet.absoluteFill} />
       <View
         ref={cardRef}
         accessible

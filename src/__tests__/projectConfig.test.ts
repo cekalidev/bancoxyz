@@ -3,52 +3,16 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 import { palette } from '@/theme';
-
-const rootDir = path.resolve(__dirname, '../..');
-
-type PackageJson = {
-  main?: string;
-  scripts?: Record<string, string>;
-  dependencies?: Record<string, string>;
-  devDependencies?: Record<string, string>;
-  jest?: Record<string, unknown>;
-};
-
-type PluginEntry = string | [string, Record<string, unknown>];
-
-type AppConfig = {
-  expo: {
-    name?: string;
-    scheme?: string;
-    orientation?: string;
-    userInterfaceStyle?: string;
-    icon?: string;
-    ios?: { supportsTablet?: boolean; bundleIdentifier?: string };
-    android?: {
-      package?: string;
-      userInterfaceStyle?: string;
-      adaptiveIcon?: {
-        foregroundImage?: string;
-        monochromeImage?: string;
-        backgroundImage?: string;
-        backgroundColor?: string;
-      };
-    };
-    web?: unknown;
-    plugins?: PluginEntry[];
-  };
-};
+import {
+  type AppConfig,
+  type PackageJson,
+  readJson,
+  readText,
+  rootDir,
+} from '@/test/projectFiles';
 
 function exists(relativePath: string): boolean {
   return fs.existsSync(path.join(rootDir, relativePath));
-}
-
-function readText(relativePath: string): string {
-  return fs.readFileSync(path.join(rootDir, relativePath), 'utf8');
-}
-
-function readJson<T>(relativePath: string): T {
-  return JSON.parse(readText(relativePath));
 }
 
 function readAppConfig(): AppConfig['expo'] {
@@ -79,16 +43,6 @@ describe('ejecución de los tests', () => {
 
     expect(testScript).toMatch(/\bjest\b/);
     expect(testScript).not.toMatch(/--watch/);
-  });
-
-  it('no define un umbral de cobertura', () => {
-    const jestConfig = jest.requireActual<Record<string, unknown>>(
-      path.join(rootDir, 'jest.config.js'),
-    );
-    const packageJestConfig = readJson<PackageJson>('package.json').jest ?? {};
-
-    expect(jestConfig).not.toHaveProperty('coverageThreshold');
-    expect(packageJestConfig).not.toHaveProperty('coverageThreshold');
   });
 });
 

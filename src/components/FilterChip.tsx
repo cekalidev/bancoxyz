@@ -32,7 +32,11 @@ export function FilterChip({ text, spokenLabel, selected, onPress, chipRef }: Fi
       style={[styles.chip, !selected && styles.chipIdle]}
     >
       {selected && (
-        <LinearGradient testID="filter-chip-gradient" {...gradients.accentSoft} style={StyleSheet.absoluteFill} />
+        <LinearGradient
+          testID="filter-chip-gradient"
+          {...gradients.accentSoft}
+          style={StyleSheet.absoluteFill}
+        />
       )}
       {selected && <CheckIcon color={contentColor} />}
       <Text style={[typography.body, selected ? styles.textApplied : styles.textIdle]}>{text}</Text>

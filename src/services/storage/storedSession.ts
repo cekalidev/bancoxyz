@@ -2,9 +2,7 @@ import { isFiniteNumber, isNonEmptyString, isRecord } from '@/services/api/guard
 import type { Session } from '@/services/api/types';
 
 export type StoredSessionResult =
-  | { status: 'valid'; session: Session }
-  | { status: 'empty' }
-  | { status: 'damaged' };
+  { status: 'valid'; session: Session } | { status: 'empty' } | { status: 'damaged' };
 
 function parseJson(raw: string): unknown {
   try {

@@ -5,11 +5,7 @@ import { isSameDate, type CalendarDate } from '@/utils/date';
 
 import type { TransferDraft, TransferOutcome } from './types';
 
-export function transferOutcome(
-  error: unknown,
-  date: CalendarDate,
-  today: CalendarDate,
-): TransferOutcome {
+export function transferOutcome(error: unknown, date: CalendarDate, today: CalendarDate): TransferOutcome {
   if (error === null) {
     return isSameDate(date, today) ? 'immediate' : 'scheduled';
   }

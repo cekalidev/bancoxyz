@@ -11,11 +11,7 @@ export function FormSkeleton({ fields }: FormSkeletonProps) {
 
   return (
     <View accessible accessibilityLabel="Cargando…" accessibilityState={{ busy: true }}>
-      <View
-        importantForAccessibility="no-hide-descendants"
-        accessibilityElementsHidden
-        style={styles.blocks}
-      >
+      <View importantForAccessibility="no-hide-descendants" accessibilityElementsHidden style={styles.blocks}>
         <View style={styles.fields}>
           {Array.from({ length: fields }, (_, index) => (
             <FieldSkeleton key={index} fontScale={fontScale} />

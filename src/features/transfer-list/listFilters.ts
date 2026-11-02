@@ -14,10 +14,7 @@ export type ListFiltersAction =
   | { type: 'removeDates' }
   | { type: 'clearAll' };
 
-type Handler<A extends ListFiltersAction> = (
-  state: ListFiltersState,
-  action: A,
-) => ListFiltersState;
+type Handler<A extends ListFiltersAction> = (state: ListFiltersState, action: A) => ListFiltersState;
 type Handlers = { [A in ListFiltersAction as A['type']]: Handler<A> };
 
 export const INITIAL_LIST_FILTERS_STATE: ListFiltersState = {
@@ -29,10 +26,7 @@ function withFilters(state: ListFiltersState, changes: Partial<ListFilters>): Li
   return { ...state, filters: { ...state.filters, ...changes } };
 }
 
-function withFiltersClosingSheet(
-  state: ListFiltersState,
-  changes: Partial<ListFilters>,
-): ListFiltersState {
+function withFiltersClosingSheet(state: ListFiltersState, changes: Partial<ListFilters>): ListFiltersState {
   return { ...withFilters(state, changes), openSheet: null };
 }
 
@@ -48,10 +42,7 @@ const handlers: Handlers = {
   clearAll: () => INITIAL_LIST_FILTERS_STATE,
 };
 
-export function listFiltersReducer(
-  state: ListFiltersState,
-  action: ListFiltersAction,
-): ListFiltersState {
+export function listFiltersReducer(state: ListFiltersState, action: ListFiltersAction): ListFiltersState {
   const handle = handlers[action.type] as Handler<ListFiltersAction>;
 
   return handle(state, action);

@@ -32,5 +32,13 @@ export function useBalance() {
   // Con el aviso a la vista, la petición en curso deja «Reintentar» ocupado.
   const retrying = pending && error !== null;
 
-  return { view: selectBalanceView({ data, error }), balance: data, message, errorId, retrying, retry, cardRef };
+  return {
+    view: selectBalanceView({ data, error }),
+    balance: data,
+    message,
+    errorId,
+    retrying,
+    retry,
+    cardRef,
+  };
 }

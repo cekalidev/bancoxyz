@@ -16,7 +16,11 @@ const FIELD_VALIDATORS: Record<TransferField, (input: RecheckInput) => string | 
 };
 
 // Revalida solo un campo que ya mostraba error; los demás esperan al siguiente «Continuar».
-export function recheckField(errors: TransferErrors, field: TransferField, input: RecheckInput): TransferErrors {
+export function recheckField(
+  errors: TransferErrors,
+  field: TransferField,
+  input: RecheckInput,
+): TransferErrors {
   if (!errors[field]) return errors;
   const { [field]: _previous, ...others } = errors;
   const message = FIELD_VALIDATORS[field](input);

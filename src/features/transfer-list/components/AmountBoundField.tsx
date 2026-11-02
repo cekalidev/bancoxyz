@@ -49,9 +49,7 @@ export function AmountBoundField({
       prefix={currency ? currencySymbol(currency) : undefined}
       accessibilityValue={{ text: spokenBound(cents, currency) }}
       right={
-        value !== '' ? (
-          <ClearButton label={`Borrar valor ${label.toLowerCase()}`} onPress={onClear} />
-        ) : null
+        value !== '' ? <ClearButton label={`Borrar valor ${label.toLowerCase()}`} onPress={onClear} /> : null
       }
     />
   );

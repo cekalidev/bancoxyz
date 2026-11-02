@@ -17,13 +17,7 @@ type AmountFilterSheetProps = {
   onClose: () => void;
 };
 
-export function AmountFilterSheet({
-  applied,
-  currency,
-  onApply,
-  onRemove,
-  onClose,
-}: AmountFilterSheetProps) {
+export function AmountFilterSheet({ applied, currency, onApply, onRemove, onClose }: AmountFilterSheetProps) {
   const { draft, fromRef, toRef, change, clear, apply } = useAmountDraft(applied, onApply);
 
   return (

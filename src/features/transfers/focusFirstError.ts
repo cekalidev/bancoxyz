@@ -13,5 +13,6 @@ export type TransferFieldRefs = {
 export function focusFirstError(errors: TransferErrors, refs: TransferFieldRefs): void {
   if (errors.amount) refs.amountRef.current?.focus();
   else if (errors.document) refs.documentRef.current?.focus();
-  else if (errors.date && refs.dateRef.current) AccessibilityInfo.sendAccessibilityEvent(refs.dateRef.current, 'focus');
+  else if (errors.date && refs.dateRef.current)
+    AccessibilityInfo.sendAccessibilityEvent(refs.dateRef.current, 'focus');
 }

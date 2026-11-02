@@ -17,11 +17,7 @@ function limitsFrom(field: BoundField, other: CalendarDate | null): Omit<PickerR
   return field === 'from' ? { max: other } : { min: other };
 }
 
-export function pickerRequestFor(
-  field: BoundField,
-  draft: DateBounds,
-  today: CalendarDate,
-): PickerRequest {
+export function pickerRequestFor(field: BoundField, draft: DateBounds, today: CalendarDate): PickerRequest {
   const other = field === 'from' ? draft.to : draft.from;
   const limits = limitsFrom(field, other);
   const own = draft[field];
