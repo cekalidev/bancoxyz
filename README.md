@@ -13,6 +13,19 @@ Capturas de la compilación release en un dispositivo Android.
 | <img src="docs/capturas/confirmacion.png" width="220" alt="Pantalla de confirmación de la transferencia"> | <img src="docs/capturas/resultado.png" width="220" alt="Pantalla con el resultado de la transferencia"> | <img src="docs/capturas/listado.png" width="220" alt="Listado de transferencias con búsqueda y filtros"> |
 |                                               Confirmación                                                |                                                Resultado                                                |                                        Listado de transferencias                                         |
 
+## Descargar la APK
+
+La versión 1.0.0 para Android está publicada en [Releases](https://github.com/cekalidev/bancoxyz/releases/latest)
+de GitHub. También se puede
+[descargar el archivo directamente](https://github.com/cekalidev/bancoxyz/releases/download/v1.0.0/bancoxyz-v1.0.0.apk).
+
+1. Descargar el archivo `bancoxyz-v1.0.0.apk` en el móvil Android.
+2. Abrirlo y, si el sistema lo pide, permitir instalar apps de origen desconocido.
+3. Entrar con las [Credenciales de prueba](#credenciales-de-prueba).
+
+> Es la compilación release firmada con la clave de depuración, para probar la app sin pasar por una tienda.
+> Play Protect puede mostrar un aviso al instalarla.
+
 ## Requisitos
 
 - Node.js 26 y npm 11 (verificado con Node 26.10.0 y npm 11.19.1).
@@ -22,7 +35,11 @@ Capturas de la compilación release en un dispositivo Android.
 
 ## Instalación
 
+Clonar el repositorio e instalar las dependencias:
+
 ```bash
+git clone https://github.com/cekalidev/bancoxyz.git
+cd bancoxyz
 npm ci
 ```
 

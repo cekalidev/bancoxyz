@@ -7,6 +7,9 @@ const TRANSFER_SCREENS = 'src/features/transfers/screens';
 const LIST_SCREENS = 'src/features/transfer-list/screens';
 const ICON_PATHS = 'src/test/iconPaths.ts';
 const HOME_HELPERS = 'src/test/homeHelpers.ts';
+const README_SECTIONS = 'src/test/readmeSections.ts';
+const readmeTests = (names: string[]) => names.map((name) => `src/__tests__/${name}.test.ts`);
+const README_TESTS = readmeTests(['readme', 'readmeScreenshots', 'readmeDelivery']);
 const iconHelpers = { pathsOf: ICON_PATHS, strokeColorsOf: ICON_PATHS, pathsOfIcon: ICON_PATHS };
 
 const groups: HelperGroup[] = [
@@ -119,6 +122,29 @@ const groups: HelperGroup[] = [
       'refresh',
     ].map((part) => `${LIST_SCREENS}/TransferListScreen.${part}.test.tsx`),
   },
+  {
+    name: 'readReadme, readmeLines, readmeSection y markdownTableRows viven en las utilidades de test y los tests del README no los redefinen ni leen el archivo en línea',
+    helpers: {
+      readReadme: README_SECTIONS,
+      readmeLines: README_SECTIONS,
+      readmeSection: README_SECTIONS,
+      markdownTableRows: README_SECTIONS,
+    },
+    files: README_TESTS,
+    inlineCopies: [/readText\('README\.md'\)/],
+  },
+  {
+    name: 'los tests del README importan readmeSection de las utilidades de test',
+    helpers: { readmeSection: README_SECTIONS },
+    files: [],
+    importers: README_TESTS,
+  },
+  {
+    name: 'los tests del README que leen tablas importan markdownTableRows de las utilidades de test',
+    helpers: { markdownTableRows: README_SECTIONS },
+    files: [],
+    importers: readmeTests(['readme', 'readmeScreenshots']),
+  },
 ];
 
 describe('ayudantes de test sin copias', () => {
@@ -153,6 +179,10 @@ const SHARED_HELPERS = [
   'settleRequests',
   'balanceRequests',
   'balanceResponse',
+  'readReadme',
+  'readmeLines',
+  'readmeSection',
+  'markdownTableRows',
 ];
 
 describe('ayudantes compartidos', () => {
